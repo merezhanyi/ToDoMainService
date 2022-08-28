@@ -4,8 +4,9 @@ Main monolith service for ToDo application.
 
 ## Initial Configuration
 
-- Java 18
+- Java 11
 - Gradle
-- Spring Boot 3.0.0 (M4)
+- Spring Boot 2.7.3
 - Packaging: Jar
-- Dependencies: PostgreSQL Driver, Spring Web, Spring Data JPA, Spring Security
+- Database: mariadb 10.9.2
+- Dependencies: MariaDB Driver, Spring Web, Spring Data JPA, Spring Security
