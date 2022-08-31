@@ -1,4 +1,4 @@
-package com.crg.todo.tasks_list.domain;
+package com.crg.todo.tasks_list.entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -39,11 +39,11 @@ public class Task {
         this.description = description;
     }
 
-    public boolean isDone() {
+    public Boolean isDone() {
         return isDone;
     }
 
-    public void setDone(boolean done) {
+    public void setDone(Boolean done) {
         isDone = done;
     }
 

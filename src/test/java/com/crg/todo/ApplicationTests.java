@@ -1,7 +1,7 @@
 package com.crg.todo;
 
 import com.crg.todo.tasks_list.TasksController;
-import com.crg.todo.tasks_list.domain.Task;
+import com.crg.todo.tasks_list.entity.Task;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

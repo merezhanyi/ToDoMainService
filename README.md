@@ -26,6 +26,7 @@ spring.datasource.url=jdbc:mariadb://localhost:3306/YOUR_DATABASE
 spring.datasource.username=YOUR_USERNAME
 spring.datasource.password=YOUR_PASSWORD
 ```
+_!! Don't commit your local changes for this file to GitHub !!_
 
 ## Build and start
 
