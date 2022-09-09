@@ -1,0 +1,30 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+  # api_service:
+  #   build: .
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+  #   depends_on:
+  #     - maria_db
+  #   links:
+  #     - maria_db:app_db
+
+  maria_db:
+    image: mariadb
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: todolist
+      MYSQL_USER: root
+      MYSQL_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: example
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 9000:8080
