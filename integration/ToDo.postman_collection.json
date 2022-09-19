@@ -15,7 +15,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "    {\r\n        \"description\": \"Test1\",\r\n        \"dateTime\": \"2022-08-28T12:10:17.2326204\",\r\n        \"done\": false\r\n    }",
+					"raw": "    {\r\n        \"description\": \"Test0\",\r\n        \"dateTime\": \"2022-08-29T12:10:17.2326204\",\r\n        \"done\": false\r\n    }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -23,22 +23,47 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/v1/tasks/create",
+					"raw": "localhost:8080/api/v1/tasks/",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"v1",
 						"tasks",
-						"create"
+						""
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "readTasksList",
+			"name": "readTaskByID",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/tasks/14",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"tasks",
+						"14"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "readAllTasks",
 			"request": {
 				"auth": {
 					"type": "noauth"
@@ -61,24 +86,39 @@
 			"response": []
 		},
 		{
-			"name": "updateTask",
+			"name": "readAllTasksSorted",
 			"request": {
 				"auth": {
 					"type": "noauth"
 				},
-				"method": "POST",
+				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "    {\r\n        \"description\": \"Test0\",\r\n        \"done\": false\r\n    }",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
-					"raw": "localhost:8080/v1/tasks/update?id=1",
+					"raw": "localhost:8080/api/v1/tasks/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"tasks",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "readTaskByPage",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/v1/tasks/list",
 					"host": [
 						"localhost"
 					],
@@ -86,13 +126,78 @@
 					"path": [
 						"v1",
 						"tasks",
-						"update"
+						"list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "readTaskByPageSorted",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/tasks/?page=1&sort=asc&field=dateTime",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"tasks",
+						""
 					],
 					"query": [
 						{
-							"key": "id",
+							"key": "page",
 							"value": "1"
+						},
+						{
+							"key": "sort",
+							"value": "asc"
+						},
+						{
+							"key": "field",
+							"value": "dateTime"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateTask",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"description\": \"Test00\",\r\n        \"done\": false\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/tasks/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"tasks",
+						"1"
 					]
 				}
 			},
@@ -104,24 +209,19 @@
 				"auth": {
 					"type": "noauth"
 				},
-				"method": "POST",
+				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/v1/tasks/delete?id=5",
+					"raw": "localhost:8080/api/v1/tasks/3",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
+						"api",
 						"v1",
 						"tasks",
-						"delete"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "5"
-						}
+						"3"
 					]
 				}
 			},

@@ -10,16 +10,18 @@ import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-class ApplicationTests {
+@SpringBootTest class ApplicationTests {
 
-    @Autowired
-    TasksController tasksController;
+    @Autowired TasksController tasksController;
 
-    @Test
-    void getTasksList() {
-        ArrayList<Task> body = (ArrayList<Task>) tasksController.findAllTasks().getBody();
-        Integer status = tasksController.findAllTasks().getStatusCodeValue();
+    @Test void getTasksList() {
+        ArrayList<Task>
+                body = (ArrayList<Task>) tasksController
+                        .findTasks("", "", "")
+                        .getBody();
+        Integer status = tasksController
+                            .findTasks("", "", "")
+                            .getStatusCodeValue();
 
         assertThat(tasksController).isNotNull();
         assertThat(status).isEqualTo(200);
