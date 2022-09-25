@@ -2,6 +2,9 @@ package com.crg.todo.tasks_list;
 
 import com.crg.todo.tasks_list.entity.Task;
 import com.crg.todo.tasks_list.service.TasksService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +21,8 @@ import java.util.Optional;
 // httpRequest > controller > service (magic here) > repo (interface) > entities (db)
 //             < controller < service (magic here) < repo (interface) < entities (db)
 
-@RestController @RequestMapping("api/v1/") public class TasksController {
+@CrossOrigin(origins = "${client.url}") @RestController
+@RequestMapping("api/v1/") public class TasksController {
 
     private static final Logger
             logger =
@@ -26,71 +30,145 @@ import java.util.Optional;
 
     @Autowired TasksService tasksService;
 
-    @PostMapping("tasks/")
+    @PostMapping(value = "tasks/", produces = "application/json")
     public ResponseEntity<?> createTask(@RequestBody Task task) {
         logger.info("Received request to create a new task: " +
                 task.toString());
+
+        HttpStatus status;
+
         try {
             Task newTask = tasksService.createTask(task);
+            ObjectMapper mapper = new ObjectMapper();
+            String body = mapper.writeValueAsString(newTask);
+            status = HttpStatus.OK;
 
-            return new ResponseEntity<>("Created new task with ID=" +
-                    newTask.getId(), HttpStatus.CREATED);
+            return new ResponseEntity<>(body.toString(), status);
         } catch (Exception e) {
-            return new ResponseEntity<>("Task creation failed",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+            JSONObject body = new JSONObject();
+            body.put("code", "INTERNAL_SERVER_ERROR");
+            body.put("message", "Oops! Task creation failed.");
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+            return new ResponseEntity<>(body.toString(), status);
         }
     }
 
-    @GetMapping("tasks/")
+    @GetMapping(value = "tasks/", produces = "application/json")
     public ResponseEntity<?> findTasks(
             @RequestParam(required = false) String page,
             @RequestParam(required = false) String sort,
-            @RequestParam(required = false) String field) {
+            @RequestParam(required = false) String field)
+            throws JsonProcessingException {
         logger.info("Received request to retrieve tasks");
+
+        HttpStatus status;
         List<Task> tasks = tasksService.findAllTasks(page, sort, field);
 
-        return tasks.size() > 0 ?
-                new ResponseEntity<>(tasks, HttpStatus.OK) :
-                new ResponseEntity<>("No tasks found", HttpStatus.BAD_REQUEST);
+        if (tasks.size() > 0) {
+            ObjectMapper mapper = new ObjectMapper();
+            String body = mapper.writeValueAsString(tasks);
+            status = HttpStatus.OK;
+
+            return new ResponseEntity<>(body, status);
+        } else {
+            JSONObject body = new JSONObject();
+            body.put("code", "NOT_FOUND");
+            body.put("message", "Oops! No tasks found");
+            status = HttpStatus.NOT_FOUND;
+
+            return new ResponseEntity<>(body.toString(), status);
+        }
     }
 
-    @GetMapping("tasks/{id}")
-    public ResponseEntity<?> findTask(@PathVariable("id") Long id) {
+    @GetMapping(value = "tasks/{id}", produces = "application/json")
+    public ResponseEntity<?> findTask(@PathVariable("id") Long id)
+            throws JsonProcessingException {
         logger.info("Received request to retrieve task with ID=" + id);
+
+        HttpStatus status;
         Optional<Task> task = tasksService.findById(id);
 
-        return task != null ?
-                new ResponseEntity<>(task, HttpStatus.OK) :
-                new ResponseEntity<>("No task found", HttpStatus.BAD_REQUEST);
+        if (task != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            String body = mapper.writeValueAsString(task.get());
+            status = HttpStatus.OK;
+
+            return new ResponseEntity<>(body, status);
+        } else {
+            JSONObject body = new JSONObject();
+            body.put("code", "NOT_FOUND");
+            body.put("message", "Oops! Task was not found.");
+            body.put("id", id);
+            status = HttpStatus.NOT_FOUND;
+
+            return new ResponseEntity<>(body.toString(), status);
+        }
     }
 
-    @PutMapping("tasks/{id}")
+    @PutMapping(value = "tasks/{id}", produces = "application/json")
     public ResponseEntity<?> updateTask(@PathVariable("id") Long id,
-                                        @RequestBody Task task) {
+                                        @RequestBody Task task)
+            throws JsonProcessingException {
         logger.info("Received request to update task with ID=" + id);
+
+        HttpStatus status;
         Task updatedTask = tasksService.updateTask(id, task);
 
-        return updatedTask != null ?
-                new ResponseEntity<>(updatedTask, HttpStatus.OK) :
-                new ResponseEntity<>("No task found", HttpStatus.BAD_REQUEST);
+        if (updatedTask != null) {
+
+            ObjectMapper mapper = new ObjectMapper();
+            String body = mapper.writeValueAsString(updatedTask);
+            status = HttpStatus.OK;
+
+            return new ResponseEntity<>(body, status);
+        } else {
+            JSONObject body = new JSONObject();
+            body.put("code", "NOT_FOUND");
+            body.put("message", "Oops! Task was not found.");
+            body.put("id", id);
+            status = HttpStatus.NOT_FOUND;
+
+            return new ResponseEntity<>(body.toString(), status);
+        }
     }
 
-    @DeleteMapping("tasks/{id}")
+    @DeleteMapping(value = "tasks/{id}", produces = "application/json")
     public ResponseEntity<?> deleteTask(@PathVariable("id") Long id) {
         logger.info("Received request to delete task with ID=" + id);
+
+        JSONObject body = new JSONObject();
+        HttpStatus status;
+
         try {
             tasksService.deleteTask(id);
-            return new ResponseEntity<>("Deleted task with ID=" + id,
-                    HttpStatus.OK);
+            body.put("code", "OK");
+            body.put("message", "Task was deleted.");
+            body.put("id", id);
+            status = HttpStatus.OK;
+
+            return new ResponseEntity<>(body.toString(), status);
         } catch (IllegalArgumentException illegalArgumentException) {
-            return new ResponseEntity<>("Task deleting failed",
-                    HttpStatus.BAD_REQUEST);
+            body.put("code", "NOT_FOUND");
+            body.put("message", "Oops! No task found.");
+            body.put("id", id);
+            status = HttpStatus.NOT_FOUND;
+
+            return new ResponseEntity<>(body.toString(), status);
         } catch (EmptyResultDataAccessException e) {
-            return new ResponseEntity<>("No task found",
-                    HttpStatus.BAD_REQUEST);
+            body.put("code", "NOT_FOUND");
+            body.put("message", "Oops! No task found.");
+            body.put("id", id);
+            status = HttpStatus.NOT_FOUND;
+
+            return new ResponseEntity<>(body.toString(), status);
         } catch (Exception e) {
-            return new ResponseEntity<>("Task deleting failed",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+            body.put("code", "NOT_FOUND");
+            body.put("message", "Oops! Deleting failed.");
+            body.put("id", id);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+            return new ResponseEntity<>(body.toString(), status);
         }
     }
 }
