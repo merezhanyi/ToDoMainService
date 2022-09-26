@@ -7,7 +7,7 @@ info:
 servers:
   - url: 'localhost:8080'
 paths:
-  /tasks/create:
+  /api/v1/tasks/:
     post:
       summary: 'Creates new task'
       operationId: createTask
@@ -32,13 +32,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /tasks/read:
-    post:
-      summary: 'Retunrs a list with all tasks'
-      operationId: readTasks
+  /api/v1/tasks/:
+    get:
+      summary: 'Returns list of tasks'
+      operationId: findTasks
       tags:
         - task
-      parameters: []
+      parameters:
+        - name: page
+          in: query
+          description: page number (10 each)
+          required: false
+          schema:
+            type: integer
+            format: integer
+        - name: sort
+          in: query
+          description: sort type (asc/desc)
+          required: false
+          schema:
+            type: string
+            format: string
+        - name: field
+          in: query
+          description: sort by the field (id,description,dateTime)
+          required: false
+          schema:
+            type: string
+            format: string
       responses:
         '200':
           description: 'List of tasks'
@@ -57,10 +78,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /tasks/update:
-    post:
+  /api/v1/tasks/{id}:
+    get:
+      summary: 'Returns a specific task'
+      operationId: findTask
+      tags:
+        - task
+      parameters:
+        - name: id
+          in: query
+          description: task ID
+          required: true
+          schema:
+            type: integer
+            format: long
+      responses:
+        '200':
+          description: 'A specific task'
+          headers:
+            x-next:
+              description: A specific task
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/tasks/{id}:
+    put:
       summary: 'Updates a specific task'
-      operationId: readTasks
+      operationId: updateTask
       tags:
         - task
       parameters:
@@ -89,10 +142,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /tasks/delete:
-    post:
+  /api/v1/tasks/{id}:
+    delete:
       summary: 'Deletes a specific task'
-      operationId: readTasks
+      operationId: deleteTask
       tags:
         - task
       parameters:
@@ -128,7 +181,7 @@ components:
       required:
         - id
         - description
-        - isDone
+        - done
         - dateTime
       properties:
         id:
