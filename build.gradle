@@ -26,3 +26,13 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+apply plugin: 'maven-publish'
+
+publishing {
+	publications {
+		customLibrary(MavenPublication) {
+			from components.java
+		}
+	}
+}
