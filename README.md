@@ -29,9 +29,9 @@ spring.datasource.password=YOUR_PASSWORD
 _!! Don't commit your local changes for this file to GitHub !!_
 
 ## Buld, start and deploy
-mvn compile (to build the project)
-mvn spring-boot:run (to run the setvice)
-mvn package (to create .jar file)
+- `mvn compile` - to build the project
+- `mvn spring-boot:run` - to run the service
+- `mvn package` (to build, run unit tests and create .jar file)
 
 (Gradle deprecated)
 - To build the project use: `gradle build` (runs Unit Tests as well)
