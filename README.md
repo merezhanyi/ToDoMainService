@@ -29,14 +29,14 @@ spring.datasource.password=YOUR_PASSWORD
 _!! Don't commit your local changes for this file to GitHub !!_
 
 ## Build, start and deploy
-- `mvn compile` - to build the project
-- `mvn spring-boot:run` - to run the service
-- `mvn package` (to build, run unit tests and create .jar file)
+- Build project: `mvn compile`
+- Run the service: `mvn spring-boot:run`
+- Create .jar file `mvn package`
 
 ## AWS instance usage
 - Log in AWS and navigate to `https://eu-central-1.console.aws.amazon.com/ec2/home?region=eu-central-1#Instances:`
 - Click on `i-0cec339516372eee1` instance to open details.
-- Click `Connect` and, log in linux console and run:
+- Click `Connect`, log in linux console and run:
 ```
 java -jar mainService.jar
 ```
