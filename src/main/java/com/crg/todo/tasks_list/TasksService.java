@@ -1,4 +1,4 @@
-package com.crg.todo.tasks_list.service;
+package com.crg.todo.tasks_list;
 
 import com.crg.todo.tasks_list.entity.Task;
 import com.crg.todo.tasks_list.repository.TasksRepository;
@@ -13,13 +13,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Service public class TasksService {
+@Service
+public class TasksService {
 
     private static final Logger
             logger =
             LoggerFactory.getLogger(TasksService.class);
 
-    @Autowired private TasksRepository tasksRepository;
+    @Autowired
+    private TasksRepository tasksRepository;
 
     public Task createTask(Task task) {
         return tasksRepository.save(task);

@@ -1,7 +1,6 @@
 package com.crg.todo.tasks_list;
 
 import com.crg.todo.tasks_list.entity.Task;
-import com.crg.todo.tasks_list.service.TasksService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
@@ -21,14 +20,17 @@ import java.util.Optional;
 // httpRequest > controller > service (magic here) > repo (interface) > entities (db)
 //             < controller < service (magic here) < repo (interface) < entities (db)
 
-@CrossOrigin(origins = "${client.url}") @RestController
-@RequestMapping("api/v1/") public class TasksController {
+@CrossOrigin(origins = "${client.url}")
+@RestController
+@RequestMapping("api/v1/")
+public class TasksController {
 
     private static final Logger
             logger =
             LoggerFactory.getLogger(TasksController.class);
 
-    @Autowired TasksService tasksService;
+    @Autowired
+    TasksService tasksService;
 
     @PostMapping(value = "tasks/", produces = "application/json")
     public ResponseEntity<?> createTask(@RequestBody Task task) {
