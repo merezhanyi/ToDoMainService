@@ -45,7 +45,7 @@ public class TasksController {
             String body = mapper.writeValueAsString(newTask);
             status = HttpStatus.OK;
 
-            return new ResponseEntity<>(body.toString(), status);
+            return new ResponseEntity<>(body, status);
         } catch (Exception e) {
             JSONObject body = new JSONObject();
             body.put("code", "INTERNAL_SERVER_ERROR");
