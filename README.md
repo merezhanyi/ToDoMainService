@@ -5,7 +5,7 @@ Main monolith service for ToDo application.
 ## Initial Configuration
 
 - Java 11
-- Maven
+- Gradle
 - Spring Boot 2.7.4
 - Packaging: Jar
 - Database: MariaDB 10.9.2
@@ -17,7 +17,7 @@ Main monolith service for ToDo application.
 - Add these apps to your PATH and check from command line (optional):
 ```bash
 java -version
-mvn -v
+gradle --version
 mariadb --version
 ```
 - Update database related properties in `resources/application.properties`:
@@ -29,9 +29,9 @@ spring.datasource.password=YOUR_PASSWORD
 _!! Don't commit your local changes for this file to GitHub !!_
 
 ## Build, start and deploy
-- Build project: `mvn compile`
-- Run the service: `mvn spring-boot:run`
-- Create .jar file `mvn package`
+- To build the project use: `gradle build` (runs Unit Tests as well)
+- To run the service use: `gradle bootRun` 
+- Create .jar file `gradle fatJar`
 
 ## AWS instance usage
 - Log in AWS and navigate to `https://eu-central-1.console.aws.amazon.com/ec2/home?region=eu-central-1#Instances:`
@@ -48,5 +48,9 @@ The service should response back: `I'm good`
 
 ## Security
 
-- log in: user / password1 
+- default users:
+```
+user / user (role USER)
+admin / admin (roles USER, ADMIN)
+``` 
 - to log out use url `http://Public_IPv4_DNS_url:8080/logout`
