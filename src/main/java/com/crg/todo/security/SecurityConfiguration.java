@@ -7,7 +7,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,41 +18,45 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-
     @Autowired
     SecurityService securityService;
 
     @Bean
-    public InMemoryUserDetailsManager userDetailsManager(PasswordEncoder passwordEncoder) {
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-        List<com.crg.todo.security.entity.User>
-                usersFromDatabase =
-                securityService.findAllUsers();
+    @Bean
+    public InMemoryUserDetailsManager userDetailsManager() {
         List<UserDetails> users = new ArrayList<>();
 
-        for (com.crg.todo.security.entity.User userFromDatabase : usersFromDatabase) {
-            UserDetails
-                    user =
-                    User.withUsername(userFromDatabase.getUsername())
-                            .password(passwordEncoder.encode(userFromDatabase.getPassword()))
-                            .roles(userFromDatabase.getRole())
-                            .build();
+        // default user
+        UserDetails defaultUser = User.withUsername("user")
+                .password(passwordEncoder().encode("user"))
+                .roles("USER")
+                .build();
+        users.add(defaultUser);
 
-            users.add(user);
+        // default admin
+        UserDetails defaultAdmin = User.withUsername("admin")
+                .password(passwordEncoder().encode("admin"))
+                .roles("USER", "ADMIN")
+                .build();
+        users.add(defaultAdmin);
+
+        // users from database
+        List<com.crg.todo.security.entity.User> usersFromDatabase =
+                securityService.findAllUsers();
+
+        for (com.crg.todo.security.entity.User userFromDatabase : usersFromDatabase) {
+            UserDetails dbUsers = User.withUsername(userFromDatabase.getUsername())
+                    .password(userFromDatabase.getPassword())
+                    .roles(userFromDatabase.getRole())
+                    .build();
+
+            users.add(dbUsers);
         }
-//        UserDetails
-//                user =
-//                User.withUsername("user")
-//                        .password(passwordEncoder.encode("user"))
-//                        .roles("USER")
-//                        .build();
-//        UserDetails
-//                admin =
-//                User.withUsername("admin")
-//                        .password(passwordEncoder.encode("admin"))
-//                        .roles("USER", "ADMIN")
-//                        .build();
-//        return new InMemoryUserDetailsManager(user, admin);
+
         return new InMemoryUserDetailsManager(users);
     }
 
@@ -68,13 +72,5 @@ public class SecurityConfiguration {
         http.csrf().disable();
 
         return http.build();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        PasswordEncoder
-                encoder =
-                PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        return encoder;
     }
 }

@@ -12,8 +12,7 @@ import java.util.List;
 @Service
 public class SecurityService {
 
-    private static final Logger
-            logger =
+    private static final Logger logger =
             LoggerFactory.getLogger(SecurityService.class);
 
     @Autowired
