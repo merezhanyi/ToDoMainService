@@ -58,6 +58,8 @@ public class SecurityController {
                 body.put("role", newDbAccount.getRole());
                 status = HttpStatus.OK;
 
+                logger.info(account.getUsername() + " was created");
+
                 return new ResponseEntity<>(body, status);
             } else {
                 JSONObject body = new JSONObject();
@@ -65,14 +67,17 @@ public class SecurityController {
                 body.put("message", "Oops! User creation failed.");
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
 
+                logger.error(account.getUsername() + " already presents in the database");
                 return new ResponseEntity<>(body.toString(), status);
             }
-        } catch (Exception e) {
+        } catch (Exception exception) {
             JSONObject body = new JSONObject();
             body.put("code", "INTERNAL_SERVER_ERROR");
             body.put("message", "Oops! User creation failed.");
             status = HttpStatus.INTERNAL_SERVER_ERROR;
 
+            logger.error(account.getUsername() + " was not created due to:");
+            logger.error(exception.getMessage());
             return new ResponseEntity<>(body.toString(), status);
         }
     }
@@ -80,7 +85,7 @@ public class SecurityController {
     @CrossOrigin(origins = "*")
     @PostMapping(value = "login/", produces = "application/json")
     public ResponseEntity<?> login(@RequestBody Account account) {
-        logger.info("Received login request for username: " + account.getUsername());
+        logger.info("Received login request for user: " + account.getUsername());
 
         HttpStatus status;
         Account accountFromDb = securityService.findByUsername(account.getUsername());
@@ -91,6 +96,7 @@ public class SecurityController {
                 UserDetails userDetails = getUserDetails(accountFromDb);
                 inMemoryUserDetailsManager.createUser(userDetails);
 
+                logger.info(account.getUsername() + " logged in");
                 return ResponseEntity.ok(account.getUsername() + " logged in.");
             } else {
                 JSONObject body = new JSONObject();
@@ -99,6 +105,7 @@ public class SecurityController {
                 body.put("username", account.getUsername());
                 status = HttpStatus.NOT_FOUND;
 
+                logger.error("Password is incorrect for user: " + account.getUsername());
                 return new ResponseEntity<>(body.toString(), status);
             }
         } else {
@@ -108,6 +115,7 @@ public class SecurityController {
             body.put("username", account.getUsername());
             status = HttpStatus.NOT_FOUND;
 
+            logger.error(account.getUsername() + " is not in the database");
             return new ResponseEntity<>(body.toString(), status);
         }
     }
@@ -118,6 +126,7 @@ public class SecurityController {
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
+        logger.info("Logged out");
         return ResponseEntity.ok("Logged out");
     }
 

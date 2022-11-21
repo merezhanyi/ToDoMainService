@@ -42,13 +42,16 @@ public class TasksController {
             String body = mapper.writeValueAsString(newTask);
             status = HttpStatus.OK;
 
+            logger.info(task.toString() + " task was created");
             return new ResponseEntity<>(body, status);
-        } catch (Exception e) {
+        } catch (Exception exception) {
             JSONObject body = new JSONObject();
             body.put("code", "INTERNAL_SERVER_ERROR");
             body.put("message", "Oops! Task creation failed.");
             status = HttpStatus.INTERNAL_SERVER_ERROR;
 
+            logger.error(task.toString() + " task was not created due to: ");
+            logger.error(exception.getMessage());
             return new ResponseEntity<>(body.toString(), status);
         }
     }
@@ -65,6 +68,7 @@ public class TasksController {
             String body = mapper.writeValueAsString(tasks);
             status = HttpStatus.OK;
 
+            logger.info("Tasks were found in the database");
             return new ResponseEntity<>(body, status);
         } else {
             JSONObject body = new JSONObject();
@@ -72,6 +76,7 @@ public class TasksController {
             body.put("message", "Oops! No tasks found");
             status = HttpStatus.NOT_FOUND;
 
+            logger.error("No tasks were found in the database");
             return new ResponseEntity<>(body.toString(), status);
         }
     }
@@ -88,6 +93,7 @@ public class TasksController {
             String body = mapper.writeValueAsString(task.get());
             status = HttpStatus.OK;
 
+            logger.info("A task found with ID=" + id);
             return new ResponseEntity<>(body, status);
         } else {
             JSONObject body = new JSONObject();
@@ -96,6 +102,7 @@ public class TasksController {
             body.put("id", id);
             status = HttpStatus.NOT_FOUND;
 
+            logger.error("A task was not found with ID=" + id);
             return new ResponseEntity<>(body.toString(), status);
         }
     }
@@ -113,6 +120,7 @@ public class TasksController {
             String body = mapper.writeValueAsString(updatedTask);
             status = HttpStatus.OK;
 
+            logger.info("A task updated with ID=" + id);
             return new ResponseEntity<>(body, status);
         } else {
             JSONObject body = new JSONObject();
@@ -121,6 +129,7 @@ public class TasksController {
             body.put("id", id);
             status = HttpStatus.NOT_FOUND;
 
+            logger.error("A task was not updated with ID=" + id);
             return new ResponseEntity<>(body.toString(), status);
         }
     }
@@ -139,6 +148,7 @@ public class TasksController {
             body.put("id", id);
             status = HttpStatus.OK;
 
+            logger.info("A task deleted with ID=" + id);
             return new ResponseEntity<>(body.toString(), status);
         } catch (IllegalArgumentException | EmptyResultDataAccessException exception) {
             body.put("code", "NOT_FOUND");
@@ -146,6 +156,8 @@ public class TasksController {
             body.put("id", id);
             status = HttpStatus.NOT_FOUND;
 
+            logger.error("A task was not deleted with ID=" + id + " due to:");
+            logger.error(exception.getMessage());
             return new ResponseEntity<>(body.toString(), status);
         } catch (Exception exception) {
             body.put("code", "NOT_FOUND");
@@ -153,6 +165,8 @@ public class TasksController {
             body.put("id", id);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
 
+            logger.error("A task was not deleted with ID=" + id + " due to:");
+            logger.error(exception.getMessage());
             return new ResponseEntity<>(body.toString(), status);
         }
     }

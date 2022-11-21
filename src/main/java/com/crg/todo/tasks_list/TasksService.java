@@ -2,8 +2,6 @@ package com.crg.todo.tasks_list;
 
 import com.crg.todo.tasks_list.entity.Task;
 import com.crg.todo.tasks_list.repository.TasksRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,9 +13,6 @@ import java.util.Optional;
 
 @Service
 public class TasksService {
-
-    private static final Logger logger = LoggerFactory.getLogger(TasksService.class);
-
     @Autowired
     private TasksRepository tasksRepository;
 
@@ -65,7 +60,6 @@ public class TasksService {
             existingTask = tasksRepository.findById(id).get();
             updatedTask.setId(existingTask.getId());
         } else {
-            logger.error("Task entity with ID=" + id + " was not found in database.");
             return null;
         }
 

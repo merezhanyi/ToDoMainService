@@ -14,7 +14,7 @@ public class HealthCheckController {
     @CrossOrigin(origins = "*")
     @GetMapping("/healthcheck")
     public ResponseEntity<String> healthCheck() {
-        logger.info("Received healthcheck request");
+        logger.info("Received health check request");
 
         return ResponseEntity.ok("I'm good");
     }
