@@ -1,10 +1,12 @@
 package com.crg.todo.security.entity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
-@Table(name = "users")
-public class User {
+public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -42,19 +44,6 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    //TODO this method should return data for new user but without password
-    @Override
-    public String toString() {
-        return "ID=" +
-                getId() +
-                ";" +
-                "username=" +
-                getUsername() +
-                ";" +
-                "role=" +
-                getRole();
     }
 
     // methods below are from Spring Security and not used for now

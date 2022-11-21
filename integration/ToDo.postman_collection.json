@@ -40,19 +40,16 @@
 			"response": []
 		},
 		{
-			"name": "logout",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
+			"name": "login",
 			"request": {
 				"auth": {
 					"type": "noauth"
 				},
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "    {\r\n        \"description\": \"Test0\",\r\n        \"dateTime\": \"2022-08-29T12:10:17.2326204\",\r\n        \"done\": false\r\n    }",
+					"raw": "    {\r\n        \"username\": \"admin1\",\r\n        \"password\": \"admin1\"        \r\n    }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -60,8 +57,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1/logout/",
-					"protocol": "http",
+					"raw": "localhost:8080/api/v1/login/",
 					"host": [
 						"localhost"
 					],
@@ -69,7 +65,7 @@
 					"path": [
 						"api",
 						"v1",
-						"logout",
+						"login",
 						""
 					]
 				}
@@ -80,7 +76,19 @@
 			"name": "createUser",
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
@@ -104,6 +112,49 @@
 						"v1",
 						"users",
 						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "readAllTasks",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin1",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin1",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/tasks/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"tasks",
+						""
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "",
+							"disabled": true
+						}
 					]
 				}
 			},
@@ -151,7 +202,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/v1/tasks/31",
+					"raw": "localhost:8080/api/v1/tasks/1",
 					"host": [
 						"localhost"
 					],
@@ -160,50 +211,7 @@
 						"api",
 						"v1",
 						"tasks",
-						"31"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "readAllTasks",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "admin",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/api/v1/tasks/",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"v1",
-						"tasks",
-						""
-					],
-					"query": [
-						{
-							"key": "page",
-							"value": "",
-							"disabled": true
-						}
+						"1"
 					]
 				}
 			},
@@ -329,7 +337,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/v1/tasks/31",
+					"raw": "localhost:8080/api/v1/tasks/1",
 					"host": [
 						"localhost"
 					],
@@ -338,7 +346,7 @@
 						"api",
 						"v1",
 						"tasks",
-						"31"
+						"1"
 					]
 				}
 			},
@@ -353,7 +361,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/v1/tasks/31",
+					"raw": "localhost:8080/api/v1/tasks/1",
 					"host": [
 						"localhost"
 					],
@@ -362,28 +370,50 @@
 						"api",
 						"v1",
 						"tasks",
-						"31"
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"description\": \"Test0\",\r\n        \"dateTime\": \"2022-08-29T12:10:17.2326204\",\r\n        \"done\": false\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/logout/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"logout",
+						""
 					]
 				}
 			},
 			"response": []
 		}
 	],
-	"auth": {
-		"type": "basic",
-		"basic": [
-			{
-				"key": "password",
-				"value": "user",
-				"type": "string"
-			},
-			{
-				"key": "username",
-				"value": "user",
-				"type": "string"
-			}
-		]
-	},
 	"event": [
 		{
 			"listen": "prerequest",

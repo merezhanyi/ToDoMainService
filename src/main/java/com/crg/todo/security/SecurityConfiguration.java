@@ -31,31 +31,20 @@ public class SecurityConfiguration {
         List<UserDetails> users = new ArrayList<>();
 
         // default user
-        UserDetails defaultUser = User.withUsername("user")
+        UserDetails defaultUser =
+                User.withUsername("user")
                 .password(passwordEncoder().encode("user"))
                 .roles("USER")
                 .build();
         users.add(defaultUser);
 
         // default admin
-        UserDetails defaultAdmin = User.withUsername("admin")
+        UserDetails defaultAdmin =
+                User.withUsername("admin")
                 .password(passwordEncoder().encode("admin"))
                 .roles("USER", "ADMIN")
                 .build();
         users.add(defaultAdmin);
-
-        // users from database
-        List<com.crg.todo.security.entity.User> usersFromDatabase =
-                securityService.findAllUsers();
-
-        for (com.crg.todo.security.entity.User userFromDatabase : usersFromDatabase) {
-            UserDetails dbUsers = User.withUsername(userFromDatabase.getUsername())
-                    .password(userFromDatabase.getPassword())
-                    .roles(userFromDatabase.getRole())
-                    .build();
-
-            users.add(dbUsers);
-        }
 
         return new InMemoryUserDetailsManager(users);
     }
@@ -63,7 +52,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/healthcheck")
+                .antMatchers("/healthcheck", "/api/v1/login/")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

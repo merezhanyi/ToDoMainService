@@ -1,7 +1,7 @@
 package com.crg.todo.security;
 
-import com.crg.todo.security.entity.User;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.crg.todo.security.entity.Account;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,44 +19,42 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@CrossOrigin(origins = "${client.url}")
-@RestController
-@RequestMapping("api/v1/")
-public class SecurityController {
+@CrossOrigin(origins = "${client.url}") @RestController
+@RequestMapping("api/v1/") public class SecurityController {
 
-    private static final Logger logger =
+    private static final Logger
+            logger =
             LoggerFactory.getLogger(SecurityService.class);
 
-    @Autowired
-    SecurityService securityService;
+    @Autowired SecurityService securityService;
 
-    @Autowired
-    private InMemoryUserDetailsManager inMemoryUserDetailsManager;
+    @Autowired private InMemoryUserDetailsManager inMemoryUserDetailsManager;
 
-    @Autowired
-    public PasswordEncoder passwordEncoder;
+    @Autowired public PasswordEncoder passwordEncoder;
 
     @PostMapping(value = "users/", produces = "application/json")
-    public ResponseEntity<?> createUser(@RequestBody User user) {
+    public ResponseEntity<?> createUser(@RequestBody Account account) {
         logger.info("Received request to create a new user: " +
-                user.toString());
+                account.toString());
 
         HttpStatus status;
 
         try {
-            User encodedUser = new User();
-            encodedUser.setUsername(user.getUsername());
-            encodedUser.setPassword(passwordEncoder.encode(user.getPassword()));
-            encodedUser.setRole(user.getRole());
+            Account encodedUser = new Account();
+            encodedUser.setUsername(account.getUsername());
+            encodedUser.setPassword(passwordEncoder.encode(account.getPassword()));
+            encodedUser.setRole(account.getRole());
 
-            User newDbUser = securityService.createUser(encodedUser);
+            Account newDbAccount = securityService.createUser(encodedUser);
 
-            if (newDbUser != null) {
-                UserDetails newUser = getUserDetails(user);
-                inMemoryUserDetailsManager.createUser(newUser);
+            if (newDbAccount != null) {
+                UserDetails newAccount = getUserDetailsWithEncodedPswd(account);
+                inMemoryUserDetailsManager.createUser(newAccount);
 
-                ObjectMapper mapper = new ObjectMapper();
-                String body = mapper.writeValueAsString(newDbUser.toString());
+                JSONObject body = new JSONObject();
+                body.put("id", newDbAccount.getId());
+                body.put("username", newDbAccount.getUsername());
+                body.put("role", newDbAccount.getRole());
                 status = HttpStatus.OK;
 
                 return new ResponseEntity<>(body, status);
@@ -78,10 +76,51 @@ public class SecurityController {
         }
     }
 
+    @CrossOrigin(origins = "*")
+    @PostMapping(value = "login/", produces = "application/json")
+    public ResponseEntity<?> login(@RequestBody Account account)
+            throws JsonProcessingException {
+        logger.info("Received login request for username: " +
+                account.getUsername());
+
+        HttpStatus status;
+        Account
+                accountFromDb =
+                securityService.findByUsername(account.getUsername());
+
+        if (accountFromDb != null) {
+            if (passwordEncoder.matches(account.getPassword(), accountFromDb.getPassword())) {
+
+                UserDetails userDetails = getUserDetails(accountFromDb);
+                inMemoryUserDetailsManager.createUser(userDetails);
+
+                return ResponseEntity.ok(account.getUsername() + " logged in.");
+            } else {
+                JSONObject body = new JSONObject();
+                body.put("code", "NOT_FOUND");
+                body.put("message", "Oops! User with the credentials not found.");
+                body.put("username", account.getUsername());
+                status = HttpStatus.NOT_FOUND;
+
+                return new ResponseEntity<>(body.toString(), status);
+            }
+        } else {
+            JSONObject body = new JSONObject();
+            body.put("code", "NOT_FOUND");
+            body.put("message",
+                    "Oops! User not found.");
+            body.put("username", account.getUsername());
+            status = HttpStatus.NOT_FOUND;
+
+            return new ResponseEntity<>(body.toString(), status);
+        }
+    }
+
     @GetMapping("logout/")
     public ResponseEntity<String> logout(HttpServletRequest request,
                                          HttpServletResponse response) {
-        Authentication auth =
+        Authentication
+                auth =
                 SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
@@ -89,12 +128,25 @@ public class SecurityController {
         return ResponseEntity.ok("Logged out");
     }
 
-    private UserDetails getUserDetails(User user) {
-        UserDetails newUser = org.springframework.security.core.userdetails
-                .User.withUsername(user.getUsername())
-                .password(passwordEncoder.encode(user.getPassword()))
-                .roles(user.getRole())
-                .build();
+    private UserDetails getUserDetailsWithEncodedPswd(Account account) {
+        UserDetails
+                newUser =
+                org.springframework.security.core.userdetails.User.withUsername(
+                        account.getUsername())
+                        .password(passwordEncoder.encode(account.getPassword()))
+                        .roles(account.getRole())
+                        .build();
+        return newUser;
+    }
+
+    private UserDetails getUserDetails(Account account) {
+        UserDetails
+                newUser =
+                org.springframework.security.core.userdetails.User.withUsername(
+                        account.getUsername())
+                        .password(account.getPassword())
+                        .roles(account.getRole())
+                        .build();
         return newUser;
     }
 }
