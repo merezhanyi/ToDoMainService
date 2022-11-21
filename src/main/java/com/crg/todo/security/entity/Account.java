@@ -1,5 +1,8 @@
 package com.crg.todo.security.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,46 +10,22 @@ import javax.persistence.Id;
 
 @Entity
 public class Account {
+    @Getter
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Getter
+    @Setter
     private String username;
+    @Getter
+    @Setter
     private String password;
+    @Getter
+    @Setter
     private String role;
 
-    public long getId() {
-        return id;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    // methods below are from Spring Security and not used for now
+// methods below are from Spring Security and not used for now
 
     public boolean isAccountNonExpired() {
         return true;

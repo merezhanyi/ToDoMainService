@@ -32,26 +32,34 @@ public class TasksController {
 
     @PostMapping(value = "tasks/", produces = "application/json")
     public ResponseEntity<?> createTask(@RequestBody Task task) {
-        logger.info("Received request to create a new task: " + task.toString());
+        logger.info("Received request to create a new task:");
+        logger.info("description: " + task.getDescription());
+        logger.info("date/time: " + task.getDateTime());
+        logger.info("done: " + task.isDone());
 
         HttpStatus status;
 
         try {
             Task newTask = tasksService.createTask(task);
-            ObjectMapper mapper = new ObjectMapper();
-            String body = mapper.writeValueAsString(newTask);
+            JSONObject body = new JSONObject();
+            body.put("code", "OK");
+            body.put("message", "Task was created.");
+            body.put("id: ", newTask.getId());
+            body.put("description: ", newTask.getDescription());
+            body.put("dateTime: ", newTask.getDateTime());
+            body.put("isDone: ", newTask.isDone());
             status = HttpStatus.OK;
 
-            logger.info(task.toString() + " task was created");
-            return new ResponseEntity<>(body, status);
+            logger.info("Task was created with description: " + task.getDescription());
+            return new ResponseEntity<>(body.toString(), status);
         } catch (Exception exception) {
             JSONObject body = new JSONObject();
             body.put("code", "INTERNAL_SERVER_ERROR");
             body.put("message", "Oops! Task creation failed.");
             status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-            logger.error(task.toString() + " task was not created due to: ");
-            logger.error(exception.getMessage());
+            logger.info("Task was not created with description: " + task.getDescription());
+            logger.error("due to: " + exception.getMessage());
             return new ResponseEntity<>(body.toString(), status);
         }
     }
@@ -65,10 +73,10 @@ public class TasksController {
 
         if (tasks.size() > 0) {
             ObjectMapper mapper = new ObjectMapper();
-            String body = mapper.writeValueAsString(tasks);
+            String body = mapper.writeValueAsString(tasks.size() + " tasks were found in the database");
             status = HttpStatus.OK;
 
-            logger.info("Tasks were found in the database");
+            logger.info(tasks.size() + " tasks were found in the database");
             return new ResponseEntity<>(body, status);
         } else {
             JSONObject body = new JSONObject();
@@ -83,18 +91,23 @@ public class TasksController {
 
     @GetMapping(value = "tasks/{id}", produces = "application/json")
     public ResponseEntity<?> findTask(@PathVariable("id") Long id) throws JsonProcessingException {
-        logger.info("Received request to retrieve task with ID=" + id);
+        logger.info("Received request to retrieve task with ID: " + id);
 
         HttpStatus status;
         Optional<Task> task = tasksService.findById(id);
 
         if (task != null) {
-            ObjectMapper mapper = new ObjectMapper();
-            String body = mapper.writeValueAsString(task.get());
+            JSONObject body = new JSONObject();
+            body.put("code", "OK");
+            body.put("message", "Task was found.");
+            body.put("id: ", task.get().getId());
+            body.put("description: ", task.get().getDescription());
+            body.put("dateTime: ", task.get().getDateTime());
+            body.put("isDone: ", task.get().isDone());
             status = HttpStatus.OK;
 
-            logger.info("A task found with ID=" + id);
-            return new ResponseEntity<>(body, status);
+            logger.info("A task found with ID: " + id);
+            return new ResponseEntity<>(body.toString(), status);
         } else {
             JSONObject body = new JSONObject();
             body.put("code", "NOT_FOUND");
@@ -115,9 +128,13 @@ public class TasksController {
         Task updatedTask = tasksService.updateTask(id, task);
 
         if (updatedTask != null) {
-
-            ObjectMapper mapper = new ObjectMapper();
-            String body = mapper.writeValueAsString(updatedTask);
+            JSONObject body = new JSONObject();
+            body.put("code", "OK");
+            body.put("message", "Task was updated.");
+            body.put("id: ", updatedTask.getId());
+            body.put("description: ", updatedTask.getDescription());
+            body.put("dateTime: ", updatedTask.getDateTime());
+            body.put("isDone: ", updatedTask.isDone());
             status = HttpStatus.OK;
 
             logger.info("A task updated with ID=" + id);

@@ -75,11 +75,7 @@ public class TasksService {
             updatedTask.setDescription(existingTask.getDescription());
         }
 
-        if (task.isDone() != null) {
-            updatedTask.setDone(task.isDone());
-        } else {
-            updatedTask.setDone(existingTask.isDone());
-        }
+        updatedTask.setDone(task.isDone());
 
         return tasksRepository.save(updatedTask);
     }
