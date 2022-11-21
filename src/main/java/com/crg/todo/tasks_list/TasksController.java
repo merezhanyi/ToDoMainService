@@ -25,17 +25,14 @@ import java.util.Optional;
 @RequestMapping("api/v1/")
 public class TasksController {
 
-    private static final Logger
-            logger =
-            LoggerFactory.getLogger(TasksController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TasksController.class);
 
     @Autowired
     TasksService tasksService;
 
     @PostMapping(value = "tasks/", produces = "application/json")
     public ResponseEntity<?> createTask(@RequestBody Task task) {
-        logger.info("Received request to create a new task: " +
-                task.toString());
+        logger.info("Received request to create a new task: " + task.toString());
 
         HttpStatus status;
 
@@ -57,11 +54,7 @@ public class TasksController {
     }
 
     @GetMapping(value = "tasks/", produces = "application/json")
-    public ResponseEntity<?> findTasks(
-            @RequestParam(required = false) String page,
-            @RequestParam(required = false) String sort,
-            @RequestParam(required = false) String field)
-            throws JsonProcessingException {
+    public ResponseEntity<?> findTasks(@RequestParam(required = false) String page, @RequestParam(required = false) String sort, @RequestParam(required = false) String field) throws JsonProcessingException {
         logger.info("Received request to retrieve tasks");
 
         HttpStatus status;
@@ -84,8 +77,7 @@ public class TasksController {
     }
 
     @GetMapping(value = "tasks/{id}", produces = "application/json")
-    public ResponseEntity<?> findTask(@PathVariable("id") Long id)
-            throws JsonProcessingException {
+    public ResponseEntity<?> findTask(@PathVariable("id") Long id) throws JsonProcessingException {
         logger.info("Received request to retrieve task with ID=" + id);
 
         HttpStatus status;
@@ -109,9 +101,7 @@ public class TasksController {
     }
 
     @PutMapping(value = "tasks/{id}", produces = "application/json")
-    public ResponseEntity<?> updateTask(@PathVariable("id") Long id,
-                                        @RequestBody Task task)
-            throws JsonProcessingException {
+    public ResponseEntity<?> updateTask(@PathVariable("id") Long id, @RequestBody Task task) throws JsonProcessingException {
         logger.info("Received request to update task with ID=" + id);
 
         HttpStatus status;
@@ -150,21 +140,14 @@ public class TasksController {
             status = HttpStatus.OK;
 
             return new ResponseEntity<>(body.toString(), status);
-        } catch (IllegalArgumentException illegalArgumentException) {
+        } catch (IllegalArgumentException | EmptyResultDataAccessException exception) {
             body.put("code", "NOT_FOUND");
             body.put("message", "Oops! No task found.");
             body.put("id", id);
             status = HttpStatus.NOT_FOUND;
 
             return new ResponseEntity<>(body.toString(), status);
-        } catch (EmptyResultDataAccessException e) {
-            body.put("code", "NOT_FOUND");
-            body.put("message", "Oops! No task found.");
-            body.put("id", id);
-            status = HttpStatus.NOT_FOUND;
-
-            return new ResponseEntity<>(body.toString(), status);
-        } catch (Exception e) {
+        } catch (Exception exception) {
             body.put("code", "NOT_FOUND");
             body.put("message", "Oops! Deleting failed.");
             body.put("id", id);

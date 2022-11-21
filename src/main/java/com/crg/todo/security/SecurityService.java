@@ -9,29 +9,23 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service public class SecurityService {
+@Service
+public class SecurityService {
 
-    private static final Logger
-            logger =
-            LoggerFactory.getLogger(SecurityService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
 
-    @Autowired private AccountsRepository accountsRepository;
+    @Autowired
+    private AccountsRepository accountsRepository;
 
     public Account createUser(Account user) {
         List<Account> usersFromDatabase = accountsRepository.findAll();
 
-        boolean isUserExists = false;
         for (Account accountFromDatabase : usersFromDatabase) {
             if (accountFromDatabase.getUsername().equals(user.getUsername())) {
-                isUserExists = true;
+                return null;
             }
         }
-
-        if (!isUserExists) {
-            return accountsRepository.save(user);
-        } else {
-            return null;
-        }
+        return accountsRepository.save(user);
     }
 
     public List<Account> findAllUsers() {

@@ -16,9 +16,7 @@ import java.util.Optional;
 @Service
 public class TasksService {
 
-    private static final Logger
-            logger =
-            LoggerFactory.getLogger(TasksService.class);
+    private static final Logger logger = LoggerFactory.getLogger(TasksService.class);
 
     @Autowired
     private TasksRepository tasksRepository;
@@ -67,9 +65,7 @@ public class TasksService {
             existingTask = tasksRepository.findById(id).get();
             updatedTask.setId(existingTask.getId());
         } else {
-            logger.error("Task entity with ID=" +
-                    id +
-                    " was not found in database.");
+            logger.error("Task entity with ID=" + id + " was not found in database.");
             return null;
         }
 

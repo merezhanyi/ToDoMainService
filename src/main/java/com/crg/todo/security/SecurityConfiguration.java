@@ -31,19 +31,11 @@ public class SecurityConfiguration {
         List<UserDetails> users = new ArrayList<>();
 
         // default user
-        UserDetails defaultUser =
-                User.withUsername("user")
-                .password(passwordEncoder().encode("user"))
-                .roles("USER")
-                .build();
+        UserDetails defaultUser = User.withUsername("user").password(passwordEncoder().encode("user")).roles("USER").build();
         users.add(defaultUser);
 
         // default admin
-        UserDetails defaultAdmin =
-                User.withUsername("admin")
-                .password(passwordEncoder().encode("admin"))
-                .roles("USER", "ADMIN")
-                .build();
+        UserDetails defaultAdmin = User.withUsername("admin").password(passwordEncoder().encode("admin")).roles("USER", "ADMIN").build();
         users.add(defaultAdmin);
 
         return new InMemoryUserDetailsManager(users);
@@ -51,13 +43,7 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/healthcheck", "/api/v1/login/")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .httpBasic();
+        http.authorizeRequests().antMatchers("/healthcheck", "/api/v1/login/").permitAll().anyRequest().authenticated().and().httpBasic();
         http.csrf().disable();
 
         return http.build();

@@ -57,9 +57,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "ID=" + getId() + ";"
-                + "Desc=" + getDescription() + ";"
-                + "DateTime=" + getDateTime() + ";"
-                + "Done=" + isDone();
+        return "ID=" + getId() + ";" + "Desc=" + getDescription() + ";" + "DateTime=" + getDateTime() + ";" + "Done=" + isDone();
     }
 }

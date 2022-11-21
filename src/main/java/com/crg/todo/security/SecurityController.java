@@ -1,7 +1,6 @@
 package com.crg.todo.security;
 
 import com.crg.todo.security.entity.Account;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,23 +18,25 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@CrossOrigin(origins = "${client.url}") @RestController
-@RequestMapping("api/v1/") public class SecurityController {
+@CrossOrigin(origins = "${client.url}")
+@RestController
+@RequestMapping("api/v1/")
+public class SecurityController {
 
-    private static final Logger
-            logger =
-            LoggerFactory.getLogger(SecurityService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SecurityService.class);
 
-    @Autowired SecurityService securityService;
+    @Autowired
+    SecurityService securityService;
 
-    @Autowired private InMemoryUserDetailsManager inMemoryUserDetailsManager;
+    @Autowired
+    private InMemoryUserDetailsManager inMemoryUserDetailsManager;
 
-    @Autowired public PasswordEncoder passwordEncoder;
+    @Autowired
+    public PasswordEncoder passwordEncoder;
 
     @PostMapping(value = "users/", produces = "application/json")
     public ResponseEntity<?> createUser(@RequestBody Account account) {
-        logger.info("Received request to create a new user: " +
-                account.toString());
+        logger.info("Received request to create a new user: " + account.toString());
 
         HttpStatus status;
 
@@ -78,15 +79,11 @@ import javax.servlet.http.HttpServletResponse;
 
     @CrossOrigin(origins = "*")
     @PostMapping(value = "login/", produces = "application/json")
-    public ResponseEntity<?> login(@RequestBody Account account)
-            throws JsonProcessingException {
-        logger.info("Received login request for username: " +
-                account.getUsername());
+    public ResponseEntity<?> login(@RequestBody Account account) {
+        logger.info("Received login request for username: " + account.getUsername());
 
         HttpStatus status;
-        Account
-                accountFromDb =
-                securityService.findByUsername(account.getUsername());
+        Account accountFromDb = securityService.findByUsername(account.getUsername());
 
         if (accountFromDb != null) {
             if (passwordEncoder.matches(account.getPassword(), accountFromDb.getPassword())) {
@@ -107,8 +104,7 @@ import javax.servlet.http.HttpServletResponse;
         } else {
             JSONObject body = new JSONObject();
             body.put("code", "NOT_FOUND");
-            body.put("message",
-                    "Oops! User not found.");
+            body.put("message", "Oops! User not found.");
             body.put("username", account.getUsername());
             status = HttpStatus.NOT_FOUND;
 
@@ -117,11 +113,8 @@ import javax.servlet.http.HttpServletResponse;
     }
 
     @GetMapping("logout/")
-    public ResponseEntity<String> logout(HttpServletRequest request,
-                                         HttpServletResponse response) {
-        Authentication
-                auth =
-                SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
@@ -129,24 +122,10 @@ import javax.servlet.http.HttpServletResponse;
     }
 
     private UserDetails getUserDetailsWithEncodedPswd(Account account) {
-        UserDetails
-                newUser =
-                org.springframework.security.core.userdetails.User.withUsername(
-                        account.getUsername())
-                        .password(passwordEncoder.encode(account.getPassword()))
-                        .roles(account.getRole())
-                        .build();
-        return newUser;
+        return org.springframework.security.core.userdetails.User.withUsername(account.getUsername()).password(passwordEncoder.encode(account.getPassword())).roles(account.getRole()).build();
     }
 
     private UserDetails getUserDetails(Account account) {
-        UserDetails
-                newUser =
-                org.springframework.security.core.userdetails.User.withUsername(
-                        account.getUsername())
-                        .password(account.getPassword())
-                        .roles(account.getRole())
-                        .build();
-        return newUser;
+        return org.springframework.security.core.userdetails.User.withUsername(account.getUsername()).password(account.getPassword()).roles(account.getRole()).build();
     }
 }

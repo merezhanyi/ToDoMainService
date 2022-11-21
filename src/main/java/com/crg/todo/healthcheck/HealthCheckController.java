@@ -7,11 +7,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController public class HealthCheckController {
-    private static final Logger
-            logger = LoggerFactory.getLogger(HealthCheckController.class);
+@RestController
+public class HealthCheckController {
+    private static final Logger logger = LoggerFactory.getLogger(HealthCheckController.class);
 
-    @CrossOrigin(origins = "*") @GetMapping("/healthcheck")
+    @CrossOrigin(origins = "*")
+    @GetMapping("/healthcheck")
     public ResponseEntity<String> healthCheck() {
         logger.info("Received healthcheck request");
 
