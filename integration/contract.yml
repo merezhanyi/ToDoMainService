@@ -6,7 +6,32 @@ info:
     name: MIT
 servers:
   - url: 'localhost:8080'
-paths:
+paths: 
+  /api/v1/users/:
+    post:
+      summary: 'Creates new user'
+      operationId: createUser
+      tags:
+        - user
+      parameters: []
+      responses:
+        '200':
+          description: 'Confirmation that a new user was created: Details about the user
+          headers:
+            x-next:
+              description: new user ID
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'       
   /api/v1/tasks/:
     post:
       summary: 'Creates new task'
@@ -38,7 +63,7 @@ paths:
       operationId: findTasks
       tags:
         - task
-      parameters:
+      parameters: 
         - name: page
           in: query
           description: page number (10 each)
@@ -59,7 +84,7 @@ paths:
           required: false
           schema:
             type: string
-            format: string
+            format: string      
       responses:
         '200':
           description: 'List of tasks'
@@ -109,7 +134,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error'                
   /api/v1/tasks/{id}:
     put:
       summary: 'Updates a specific task'
@@ -174,8 +199,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-components:
+components:    
   schemas:
+    User:
+      type: object
+      required:
+        - id
+        - userame
+        - password
+        - role
+      properties:
+        id:
+          type: integer
+          format: long
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
     Task:
       type: object
       required:
@@ -190,7 +232,7 @@ components:
         description:
           type: string
         isDone:
-          type: boolean
+          type: boolean            
         dateTime:
           type: string
           format: dateTime
