@@ -53,4 +53,5 @@ The service should response back: `I'm good`
 user / user (role USER)
 admin / admin (roles USER, ADMIN)
 ``` 
-- to log out use url `http://Public_IPv4_DNS_url:8080/logout`
+- to log in use url `http://Public_IPv4_DNS_url:8080/api/v1/login/`
+- to log out use url `http://Public_IPv4_DNS_url:8080/api/v1/logout/`
