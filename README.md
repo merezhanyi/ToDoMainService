@@ -5,7 +5,7 @@ Main monolith service for ToDo application.
 ## Initial Configuration
 
 - Java 11
-- Gradle
+- Gradle 7.6
 - Spring Boot 2.7.4
 - Packaging: Jar
 - Database: MariaDB 10.9.2
@@ -13,11 +13,11 @@ Main monolith service for ToDo application.
 
 ## Preparation and configuration
 
-- Install on your local PC: Java, MariaDB, Maven (Gradle deprecated)
+- Install on your local PC: Java, Gradle, MariaDB.
 - Add these apps to your PATH and check from command line (optional):
 ```bash
 java -version
-gradle --version
+gradle -v
 mariadb --version
 ```
 - Update database related properties in `resources/application.properties`:
