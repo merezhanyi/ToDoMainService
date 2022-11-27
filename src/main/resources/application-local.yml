@@ -1,0 +1,7 @@
+client:
+  url: '*'
+spring:
+  datasource:
+    password: example
+    url: jdbc:mariadb://localhost:3306/todolist
+    username: root
