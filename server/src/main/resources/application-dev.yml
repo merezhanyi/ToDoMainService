@@ -1,0 +1,27 @@
+spring:
+    datasource:
+        url: "jdbc:postgresql://localhost:5432/todolist"
+        username: "postgres"
+        password: "password"
+
+    jpa:
+        generate-ddl: true
+
+# Client URL
+client:
+    url: "*"
+
+logging:
+    level:
+        org:
+            springframework: debug
+
+management:
+  info:
+      env:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: "env,beans"
