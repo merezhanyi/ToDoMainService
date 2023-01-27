@@ -26,6 +26,6 @@ indent_style = space
 indent_size = 2
 
 # Matches JS & CI configs
-[{package.json,.travis.yml}]
+[{*.json, *.yml}]
 indent_style = space
 indent_size = 2
