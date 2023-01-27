@@ -90,7 +90,7 @@ public class TasksController {
 			status = HttpStatus.OK;
 
 			logger.info(tasks.size() + " tasks were found in the database");
-			return new ResponseEntity<>(body, status);
+			return new ResponseEntity<>(tasks, status);
 		} else {
 			JSONObject body = new JSONObject();
 			body.put("code", "NOT_FOUND");
