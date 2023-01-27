@@ -34,7 +34,6 @@ dependencies {
 
 // database
 	runtimeOnly 'org.postgresql:postgresql'
-	// runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
 // other
 	implementation 'org.json:json:20141113'

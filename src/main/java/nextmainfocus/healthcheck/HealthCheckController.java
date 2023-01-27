@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HealthCheckController {
-    private static final Logger logger = LoggerFactory.getLogger(HealthCheckController.class);
+	private static final Logger logger = LoggerFactory.getLogger(HealthCheckController.class);
 
-    @CrossOrigin(origins = "*")
-    @GetMapping("/healthcheck")
-    public ResponseEntity<String> healthCheck() {
-        logger.info("Received health check request");
+	@CrossOrigin(origins = "*")
+	@GetMapping("/healthcheck")
+	public ResponseEntity<String> healthCheck() {
+		logger.info("Received health check request");
 
-        return ResponseEntity.ok("I'm good");
-    }
+		return ResponseEntity.ok("I'm good");
+	}
 }

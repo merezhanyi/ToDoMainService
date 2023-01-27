@@ -9,6 +9,6 @@ import nextmainfocus.security.entity.Account;
 
 @Repository
 public interface AccountsRepository extends JpaRepository<Account, Long> {
-    @Query("SELECT s FROM Account s WHERE s.username =:username")
-    Account findByUsername(@Param("username") String username);
+	@Query("SELECT s FROM Account s WHERE s.username =:username")
+	Account findByUsername(@Param("username") String username);
 }
