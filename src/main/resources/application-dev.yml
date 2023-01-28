@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: "jdbc:postgresql://localhost:5432/todolist"
+    url: "jdbc:postgresql://db:5432/todolist"
     username: "postgres"
     password: "password"
 
@@ -17,6 +17,8 @@ logging:
       springframework: debug
 
 management:
+  server:
+    port: 8081
   info:
     env:
       enabled: true

@@ -1,18 +1,21 @@
 services:
-  # api:
-  #   build: .
-  #   restart: always
-  #   ports:
-  #     - "8080:8080"
-  #   environment:
-  #     - SECRET_KEY=supersecret
-  #     - ENVIRONMENT=dev
-  #     - DB_HOST=db
-  #     - DB_NAME=postgres
-  #     - DB_USER=postgres
-  #     - DB_PASSWORD=password
-  #   depends_on:
-  #     - db
+  server:
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - SECRET_KEY=supersecret
+      # - DB_HOST=db
+      # - DB_NAME=postgres
+      # - DB_USER=postgres
+      # - DB_PASSWORD=password
+      # - POSTGRES_DB=postgres
+      # - POSTGRES_USER=postgres
+      # - POSTGRES_PASSWORD=password
+    depends_on:
+      - db
 
   db:
     image: postgres:14-alpine
