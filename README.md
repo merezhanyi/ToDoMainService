@@ -1,44 +1,100 @@
-# Main service
+# Next Main Focus (service)
 
-Main monolith service for ToDo application.
+The main monolith service for the Todo List application.
 
 ## Initial Configuration
 
 - Java 17
-- Gradle 7.6
-- Spring Boot 3.0.2
+- Gradle 7.6 ([gradle-wrapper](gradle/wrapper/gradle-wrapper.properties))
+- Spring Boot 3.0.2 ([gradle config](build.gradle))
 - Packaging: Jar
-- Database: Postgres 12
-- Dependencies: Spring Web, MariaDB Driver, Spring Data JPA, Spring Security
+- Database: Postgres 14 ([docker config](docker-compose.yml))
+- Dependencies: ([gradle config](build.gradle))
+  - Spring Web
+  - Spring Security
+  - Spring Data JPA
+  - Postgres Driver
 
-## Preparation and configuration
+## Local Development
 
-- Install on your local PC: Java, Gradle, MariaDB.
+### via local installation
+
+- Install on your local PC: Java and Gradle (prefer [sdkman](https://sdkman.io)), Postgres.
 - Add these apps to your PATH and check from command line (optional):
 
 ```bash
 java -version
-gradle -v
-mariadb --version
+gradle --version
+postgres --version
 ```
 
-- Update database related properties in `resources/application.properties`:
+### via docker installation
 
-```properties
-spring.datasource.url=jdbc:mariadb://localhost:3306/YOUR_DATABASE
-spring.datasource.username=YOUR_USERNAME
-spring.datasource.password=YOUR_PASSWORD
+- Install [docker](https://www.docker.com)
+
+```sh
+docker --version
 ```
 
-_!! Don't commit your local changes for this file to GitHub !!_
+### configuration
 
-## Build, start and deploy
+- Review database related properties in [application-dev.yml](src/main/resources/application-dev.yml):
 
-- To build the project use: `gradle build` (runs Unit Tests as well)
-- To run the service use: `gradle bootRun`
+```yaml
+spring:
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/todolist"
+    username: "postgres"
+    password: "password"
+```
+
+## development locally
+
+Start/stop the Postgres service:
+
+- MacOS
+
+```sh
+brew services start postgresql
+brew services stop postgresql
+```
+
+- Linux or WSL
+
+```sh
+sudo service postgresql start
+sudo service postgresql stop
+```
+
+Run the API server.
+
+```sh
+gradle bootRun
+```
+
+## development via docker
+
+- Start docker environment `docker compose up`
+
+Available services:
+
+- Adminer [localhost:9000](http://localhost:9000/)
+- Mailhog [localhost:8025](http://localhost:9000/)
+
+Adminer credentials:
+
+- system: `PostgreSQL`
+- server: `db` <- container's name
+- username: `postgres`
+- password: `password`
+- database: `todolist`
+
+## Cloud Development (SHOULD BE UPDATED)
+
+### AWS instance usage
+
+- To build the project use: `gradle clean build` (runs Unit Tests as well)
 - Create .jar file `gradle fatJar`
-
-## AWS instance usage
 
 - Log in AWS and navigate to `https://eu-central-1.console.aws.amazon.com/ec2/home?region=eu-central-1#Instances:`
 - Click on `i-0cec339516372eee1` instance to open details.
@@ -68,4 +124,4 @@ admin / admin (roles USER, ADMIN)
 
 ## Acturator is activated
 
-<http://localhost:8080/actuator>
+The link to all links: [localhost:8080/actuator](http://localhost:8080/actuator)
