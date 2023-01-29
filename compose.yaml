@@ -1,12 +1,16 @@
 services:
   server:
-    build: .
+    build:
+       dockerfile: ./dev.Dockerfile
+    volumes:
+      - ./:/home/gradle/src
     restart: always
     ports:
       - "8080:8080"
       - "8081:8081"
     environment:
-      - SECRET_KEY=supersecret
+      - SPRING_PROFILES_ACTIVE=docker
+      # - SECRET_KEY=supersecret
       # - DB_HOST=db
       # - DB_NAME=postgres
       # - DB_USER=postgres
