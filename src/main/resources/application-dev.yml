@@ -11,10 +11,10 @@ spring:
 client:
   url: "*"
 
-logging:
-  level:
-    org:
-      springframework: debug
+# logging:
+#   level:
+#     org:
+#       springframework: debug
 
 management:
   server:
