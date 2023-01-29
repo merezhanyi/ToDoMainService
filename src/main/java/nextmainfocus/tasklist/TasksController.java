@@ -35,10 +35,6 @@ import nextmainfocus.tasklist.entity.Task;
 @RestController
 @RequestMapping("api/v1/")
 public class TasksController {
-	private static final String LOG_MESSAGE_NOT_VALID_UUID = "Provided tasks's UUID={} is not valid:";
-
-	private static final String LOG_MESSAGE_GENERAL = "Cannot retrieve data from DB due to:";
-
 	private static final Logger logger = LoggerFactory.getLogger(TasksController.class);
 
 	private static final String ID = "id";
@@ -55,6 +51,8 @@ public class TasksController {
 	private static final String MESSAGE_DELETED = "Task was deleted";
 	private static final String MESSAGE_DELETION_FAILED = "😱 Deleting failed!";
 	private static final String MESSAGE_UPDATED = "Task was updated";
+	private static final String LOG_MESSAGE_GENERAL = "Cannot retrieve data from DB due to:";
+	private static final String LOG_MESSAGE_NOT_VALID_UUID = "Provided tasks's UUID={} is not valid:";
 
 	private static String fillBody(String code, String message, @Nullable List<Task> results) {
 		JSONObject body = new JSONObject();
