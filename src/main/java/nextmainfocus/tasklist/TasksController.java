@@ -35,19 +35,26 @@ import nextmainfocus.tasklist.entity.Task;
 @RestController
 @RequestMapping("api/v1/")
 public class TasksController {
+	private static final String LOG_MESSAGE_NOT_VALID_UUID = "Provided tasks's UUID={} is not valid:";
+
+	private static final String LOG_MESSAGE_GENERAL = "Cannot retrieve data from DB due to:";
+
 	private static final Logger logger = LoggerFactory.getLogger(TasksController.class);
 
 	private static final String ID = "id";
 	private static final String CODE_OK = "OK";
 	private static final String CODE_NOT_FOUND = "NOT_FOUND";
+	private static final String CODE_BAD_REQUEST = "BAD_REQUEST";
 	private static final String CODE_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
 	private static final String MESSAGE_FOUND = "Task was found";
-	private static final String MESSAGE_NOT_FOUND = "😱 No tasks found";
+	private static final String MESSAGE_SERVER_ERROR = "🤖 Something went wrong!";
+	private static final String MESSAGE_INVALID_UUID = "😭 Invalid UUID!";
+	private static final String MESSAGE_NOT_FOUND = "😱 No tasks found!";
 	private static final String MESSAGE_CREATED = "Task was created";
-	private static final String MESSAGE_CREATION_FAILED = "😱 Task creation failed.";
+	private static final String MESSAGE_CREATION_FAILED = "😱 Task creation failed!";
 	private static final String MESSAGE_DELETED = "Task was deleted";
-	private static final String MESSAGE_DELETION_FAILED = "😱 Deleting failed";
-	private static final String MESSAGE_UPDATED = "Task was updated.";
+	private static final String MESSAGE_DELETION_FAILED = "😱 Deleting failed!";
+	private static final String MESSAGE_UPDATED = "Task was updated";
 
 	private static String fillBody(String code, String message, @Nullable List<Task> results) {
 		JSONObject body = new JSONObject();
@@ -67,43 +74,65 @@ public class TasksController {
 
 		String body;
 		HttpStatus status;
-		// TODO: catch 500 for tasksService
-		List<Task> tasks = tasksService.findAllTasks(page, sort, field);
 
-		if (!tasks.isEmpty()) {
-			logger.info("{} tasks were found in the database", tasks.size());
+		try {
+			List<Task> tasks = tasksService.findAllTasks(page, sort, field);
 
-			body = fillBody(CODE_OK, MESSAGE_FOUND, tasks);
-			status = HttpStatus.OK;
-		} else {
-			logger.error("No tasks were found in the database");
+			if (!tasks.isEmpty()) {
+				logger.info("{} tasks were found in the database", tasks.size());
 
-			body = fillBody(CODE_NOT_FOUND, MESSAGE_NOT_FOUND, null);
-			status = HttpStatus.NOT_FOUND;
+				body = fillBody(CODE_OK, MESSAGE_FOUND, tasks);
+				status = HttpStatus.OK;
+			} else {
+				logger.error("No tasks were found in the database");
+
+				body = fillBody(CODE_NOT_FOUND, MESSAGE_NOT_FOUND, null);
+				status = HttpStatus.NOT_FOUND;
+			}
+		} catch (Exception exception) {
+			logger.error(LOG_MESSAGE_GENERAL);
+			logger.error(exception.getMessage());
+
+			body = fillBody(CODE_SERVER_ERROR, MESSAGE_SERVER_ERROR, null);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
 		return new ResponseEntity<>(body, status);
 	}
 
 	@GetMapping(value = "tasks/{id}", produces = "application/json")
-	public ResponseEntity<String> findTask(@PathVariable(ID) UUID id) {
-		// TODO: validate UUID
-		logger.info("Received request to retrieve task with ID: {}", id);
+	public ResponseEntity<String> findTask(@PathVariable(ID) String uuid) {
+		logger.info("Received request to retrieve task with ID: {}", uuid);
 
 		String body;
 		HttpStatus status;
-		// TODO: catch 500 for tasksService
-		Task task = tasksService.findById(id);
 
-		if (task != null) {
-			logger.info("A task found with ID: {}", id);
+		try {
+			UUID id = UUID.fromString(uuid);
+			Task task = tasksService.findById(id);
 
-			body = fillBody(CODE_OK, MESSAGE_FOUND, Arrays.asList(task));
-			status = HttpStatus.OK;
-		} else {
-			logger.error("A task was not found with ID={}", id);
+			if (task != null) {
+				logger.info("A task found with ID: {}", id);
 
-			body = fillBody(CODE_NOT_FOUND, MESSAGE_NOT_FOUND + ": " + id, null);
-			status = HttpStatus.NOT_FOUND;
+				body = fillBody(CODE_OK, MESSAGE_FOUND, Arrays.asList(task));
+				status = HttpStatus.OK;
+			} else {
+				logger.error("A task was not found with ID={}", id);
+
+				body = fillBody(CODE_NOT_FOUND, MESSAGE_NOT_FOUND + ": " + id, null);
+				status = HttpStatus.NOT_FOUND;
+			}
+		} catch (IllegalArgumentException exception) {
+			logger.error(LOG_MESSAGE_NOT_VALID_UUID, uuid);
+			logger.error(exception.getMessage());
+
+			body = fillBody(CODE_BAD_REQUEST, MESSAGE_INVALID_UUID, null);
+			status = HttpStatus.BAD_REQUEST;
+		} catch (Exception exception) {
+			logger.error(LOG_MESSAGE_GENERAL);
+			logger.error(exception.getMessage());
+
+			body = fillBody(CODE_SERVER_ERROR, MESSAGE_SERVER_ERROR, null);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
 		return new ResponseEntity<>(body, status);
 	}
@@ -135,54 +164,74 @@ public class TasksController {
 	}
 
 	@PutMapping(value = "tasks/{id}", produces = "application/json")
-	public ResponseEntity<String> updateTask(@PathVariable(ID) UUID id, @RequestBody Task task) {
-		// TODO: validate UUID
-		logger.info("Received request to update task with ID={}", id);
-
-		String body;
-		HttpStatus status;
-		// TODO: catch 500 for tasksService
-		Task updatedTask = tasksService.updateTask(id, task);
-
-		if (updatedTask != null) {
-			logger.info("A task updated with ID={}", id);
-
-			body = fillBody(CODE_OK, MESSAGE_UPDATED, Arrays.asList(updatedTask));
-			status = HttpStatus.OK;
-		} else {
-			logger.error("A task was not updated with ID={}", id);
-
-			body = fillBody(CODE_NOT_FOUND, MESSAGE_NOT_FOUND + ": " + id, null);
-			status = HttpStatus.NOT_FOUND;
-		}
-		return new ResponseEntity<>(body, status);
-	}
-
-	@DeleteMapping(value = "tasks/{id}", produces = "application/json")
-	public ResponseEntity<String> deleteTask(@PathVariable(ID) UUID id) {
-		// TODO: validate UUID
-		logger.info("Received request to delete task with ID={}", id);
+	public ResponseEntity<String> updateTask(@PathVariable(ID) String uuid, @RequestBody Task task) {
+		logger.info("Received request to update task with ID={}", uuid);
 
 		String body;
 		HttpStatus status;
 
 		try {
+			UUID id = UUID.fromString(uuid);
+			Task updatedTask = tasksService.updateTask(id, task);
+
+			if (updatedTask != null) {
+				logger.info("A task updated with ID={}", id);
+
+				body = fillBody(CODE_OK, MESSAGE_UPDATED, Arrays.asList(updatedTask));
+				status = HttpStatus.OK;
+			} else {
+				logger.error("A task was not updated with ID={}", id);
+
+				body = fillBody(CODE_NOT_FOUND, MESSAGE_NOT_FOUND + ": " + id, null);
+				status = HttpStatus.NOT_FOUND;
+			}
+		} catch (IllegalArgumentException exception) {
+			logger.error(LOG_MESSAGE_NOT_VALID_UUID, uuid);
+			logger.error(exception.getMessage());
+
+			body = fillBody(CODE_BAD_REQUEST, MESSAGE_INVALID_UUID, null);
+			status = HttpStatus.BAD_REQUEST;
+		} catch (Exception exception) {
+			logger.error("Cannot update data in DB due to:");
+			logger.error(exception.getMessage());
+
+			body = fillBody(CODE_SERVER_ERROR, MESSAGE_SERVER_ERROR, null);
+			status = HttpStatus.INTERNAL_SERVER_ERROR;
+		}
+		return new ResponseEntity<>(body, status);
+	}
+
+	@DeleteMapping(value = "tasks/{id}", produces = "application/json")
+	public ResponseEntity<String> deleteTask(@PathVariable(ID) String uuid) {
+		logger.info("Received request to delete task with ID={}", uuid);
+
+		String body;
+		HttpStatus status;
+
+		try {
+			UUID id = UUID.fromString(uuid);
 			tasksService.deleteTask(id);
 			logger.info("A task deleted with ID={}", id);
 
 			body = fillBody(CODE_OK, MessageFormat.format("{0}: {1}", MESSAGE_DELETED, id), null);
 			status = HttpStatus.OK;
-		} catch (IllegalArgumentException | EmptyResultDataAccessException exception) {
-			logger.error("A task was not deleted with ID={} due to:", id);
+		} catch (IllegalArgumentException exception) {
+			logger.error(LOG_MESSAGE_NOT_VALID_UUID, uuid);
 			logger.error(exception.getMessage());
 
-			body = fillBody(CODE_NOT_FOUND, MessageFormat.format("{}: {}", MESSAGE_NOT_FOUND, id), null);
+			body = fillBody(CODE_BAD_REQUEST, MESSAGE_INVALID_UUID, null);
+			status = HttpStatus.BAD_REQUEST;
+		} catch (EmptyResultDataAccessException exception) {
+			logger.error("A task was not deleted with ID={} due to:", uuid);
+			logger.error(exception.getMessage());
+
+			body = fillBody(CODE_NOT_FOUND, MessageFormat.format("{}: {}", MESSAGE_NOT_FOUND, uuid), null);
 			status = HttpStatus.NOT_FOUND;
 		} catch (Exception exception) {
-			logger.error("A task was not deleted with ID={} due to:", id);
+			logger.error("A task was not deleted with ID={} due to:", uuid);
 			logger.error(exception.getMessage());
 
-			body = fillBody(CODE_SERVER_ERROR, MessageFormat.format("{}: {}", MESSAGE_DELETION_FAILED, id), null);
+			body = fillBody(CODE_SERVER_ERROR, MessageFormat.format("{}: {}", MESSAGE_DELETION_FAILED, uuid), null);
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
 		return new ResponseEntity<>(body, status);
