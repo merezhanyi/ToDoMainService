@@ -1,4 +1,4 @@
-package nextmainfocus.tasks_list;
+package nextmainfocus.tasklist;
 
 public enum Sorting {
 	ASC, DESC
