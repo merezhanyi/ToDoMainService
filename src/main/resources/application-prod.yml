@@ -1,0 +1,8 @@
+logging:
+  level:
+    org:
+      springframework: info
+    jlogicsoftware:
+      nextmainfocus: debug
+
+# Monitoring (SHOULD BE UPDATED)

@@ -1,0 +1,48 @@
+services:
+  server:
+    build:
+       dockerfile: ./dev.Dockerfile
+    volumes:
+      - ./:/home/gradle/src
+    restart: always
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      # - SECRET_KEY=supersecret
+      # - DB_HOST=db
+      # - DB_NAME=postgres
+      # - DB_USER=postgres
+      # - DB_PASSWORD=password
+      # - POSTGRES_DB=postgres
+      # - POSTGRES_USER=postgres
+      # - POSTGRES_PASSWORD=password
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "9000:8080"
+
+  mailhog:
+    image: mailhog/mailhog
+    logging:
+      driver: "none" # disable saving logs
+    ports:
+      - 1025:1025 # smtp server
+      - 8025:8025 # web ui
