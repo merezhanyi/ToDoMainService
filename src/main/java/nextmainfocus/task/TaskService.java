@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TaskService {
+
 	@Autowired
 	private TaskRepository taskRepository;
 
