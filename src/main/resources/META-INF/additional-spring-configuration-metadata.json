@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "client.url",
+      "type": "java.lang.String",
+      "description": "Possible client's URL address for CORS"
+    }
+  ]
+}

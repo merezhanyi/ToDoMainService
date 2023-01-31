@@ -1,7 +1,8 @@
-package nextmainfocus.tasks_list;
+package nextmainfocus.tasklist;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -9,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import nextmainfocus.tasks_list.entity.Task;
-import nextmainfocus.tasks_list.repository.TasksRepository;
+import nextmainfocus.tasklist.entity.Task;
+import nextmainfocus.tasklist.repository.TasksRepository;
 
 @Service
 public class TasksService {
@@ -34,7 +35,7 @@ public class TasksService {
 		if (page != null && sort != null) {
 			Pageable pageable = PageRequest.of(Integer.valueOf(page), 10, sort);
 			return tasksRepository.findAll(pageable).getContent();
-		} else if (page != null && sort == null) {
+		} else if (page != null) {
 			Pageable pageable = PageRequest.of(Integer.valueOf(page), 10);
 			return tasksRepository.findAll(pageable).getContent();
 		}
@@ -46,19 +47,23 @@ public class TasksService {
 		}
 	}
 
-	public Optional<Task> findById(Long id) {
-		if (tasksRepository.existsById(id)) {
-			return tasksRepository.findById(id);
+	public Task findById(UUID id) {
+		Optional<Task> possibleTask = tasksRepository.findById(id);
+
+		if (possibleTask.isPresent()) {
+			return possibleTask.get();
 		} else {
 			return null;
 		}
 	}
 
-	public Task updateTask(Long id, Task task) {
+	public Task updateTask(UUID id, Task task) {
 		Task updatedTask = new Task();
+		Optional<Task> possibleTask = tasksRepository.findById(id);
 		Task existingTask;
-		if (tasksRepository.findById(id).isPresent()) {
-			existingTask = tasksRepository.findById(id).get();
+
+		if (possibleTask.isPresent()) {
+			existingTask = possibleTask.get();
 			updatedTask.setId(existingTask.getId());
 		} else {
 			return null;
@@ -81,7 +86,7 @@ public class TasksService {
 		return tasksRepository.save(updatedTask);
 	}
 
-	public void deleteTask(Long id) {
+	public void deleteTask(UUID id) {
 		tasksRepository.deleteById(id);
 	}
 }
