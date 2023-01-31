@@ -1,4 +1,4 @@
-package nextmainfocus.security.entity;
+package nextmainfocus.account;
 
 import java.util.UUID;
 
@@ -38,5 +38,10 @@ public class Account {
 
 	public boolean isEnabled() {
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Account [id=" + id + ", username=" + username + ", password=" + password + ", role=" + role + "]";
 	}
 }

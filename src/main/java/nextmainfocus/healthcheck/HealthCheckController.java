@@ -12,10 +12,10 @@ public class HealthCheckController {
 	private static final Logger logger = LoggerFactory.getLogger(HealthCheckController.class);
 
 	@CrossOrigin(origins = "*")
-	@GetMapping("/healthcheck")
+	@GetMapping("/")
 	public ResponseEntity<String> healthCheck() {
 		logger.info("Received health check request");
 
-		return ResponseEntity.ok("I'm good");
+		return ResponseEntity.ok("I feel good! 🎵");
 	}
 }

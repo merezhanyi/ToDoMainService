@@ -1,11 +1,9 @@
-package nextmainfocus.security.repository;
+package nextmainfocus.account;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import nextmainfocus.security.entity.Account;
 
 @Repository
 public interface AccountsRepository extends JpaRepository<Account, Long> {
