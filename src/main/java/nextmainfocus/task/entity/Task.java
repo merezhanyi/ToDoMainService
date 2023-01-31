@@ -1,4 +1,4 @@
-package nextmainfocus.tasklist.entity;
+package nextmainfocus.task.entity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
