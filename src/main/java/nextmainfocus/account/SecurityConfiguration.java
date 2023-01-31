@@ -22,12 +22,12 @@ public class SecurityConfiguration {
 	AccountService securityService;
 
 	@Bean
-	public PasswordEncoder passwordEncoder() {
+	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
 	@Bean
-	public InMemoryUserDetailsManager userDetailsManager() {
+	InMemoryUserDetailsManager userDetailsManager() {
 		List<UserDetails> users = new ArrayList<>();
 
 		// default user
@@ -44,7 +44,7 @@ public class SecurityConfiguration {
 	}
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests().requestMatchers("/",
 				"/api/v1/login/").permitAll().anyRequest()
 				.authenticated().and().httpBasic();

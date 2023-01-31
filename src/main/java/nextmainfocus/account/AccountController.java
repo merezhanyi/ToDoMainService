@@ -50,7 +50,7 @@ public class AccountController {
 
 	@CrossOrigin(origins = "*")
 	@PostMapping(value = "login/", produces = "application/json")
-	public ResponseEntity<?> login(@RequestBody Account account) {
+	public ResponseEntity<String> login(@RequestBody Account account) {
 		logger.info("Received login request for user: {}", account.getUsername());
 
 		HttpStatus status;
@@ -97,7 +97,7 @@ public class AccountController {
 	}
 
 	@PostMapping(value = "users/", produces = "application/json")
-	public ResponseEntity<?> createUser(@RequestBody Account account) {
+	public ResponseEntity<String> createUser(@RequestBody Account account) {
 		logger.info("Received request to create a new user: {}", account);
 
 		HttpStatus status;
@@ -106,8 +106,7 @@ public class AccountController {
 			Account encodedUser = new Account();
 			encodedUser.setUsername(account.getUsername());
 			encodedUser.setPassword(passwordEncoder.encode(account.getPassword()));
-			// encodedUser.setRole(account.getRole());
-			encodedUser.setRole("USER");
+			encodedUser.setRole(account.getRole());
 
 			Account newDbAccount = securityService.createUser(encodedUser);
 
@@ -123,7 +122,7 @@ public class AccountController {
 
 				logger.info("{} was created", account.getUsername());
 
-				return new ResponseEntity<>(body, status);
+				return new ResponseEntity<>(body.toString(), status);
 			} else {
 				JSONObject body = new JSONObject();
 				body.put("code", "INTERNAL_SERVER_ERROR");
