@@ -10,9 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import nextmainfocus.task.entity.Task;
-import nextmainfocus.task.repository.TaskRepository;
-
 @Service
 public class TaskService {
 	@Autowired
