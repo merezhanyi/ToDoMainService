@@ -4,3 +4,5 @@ logging:
       springframework: info
     jlogicsoftware:
       nextmainfocus: debug
+
+# Monitoring (SHOULD BE UPDATED)
