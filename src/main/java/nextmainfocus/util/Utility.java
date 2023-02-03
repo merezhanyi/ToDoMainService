@@ -1,17 +1,16 @@
-package nextmainfocus.http;
+package nextmainfocus.util;
 
 import java.util.List;
 
 import org.json.JSONObject;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatusCode;
 
 import jakarta.annotation.Nullable;
 import lombok.experimental.UtilityClass;
 
-@Component
 @UtilityClass
 public class Utility {
-	public static <T> String fillResponseBody(String code, String message, @Nullable List<T> results) {
+	public static <T> String fillResponseBody(HttpStatusCode code, String message, @Nullable List<T> results) {
 		JSONObject body = new JSONObject();
 		body.put("code", code);
 		body.put("message", message);
