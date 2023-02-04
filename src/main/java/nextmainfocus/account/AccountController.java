@@ -30,7 +30,7 @@ public class AccountController {
 	private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
 
 	@Autowired
-	AccountService securityService;
+	AccountService accountService;
 
 	@Autowired
 	private InMemoryUserDetailsManager inMemoryUserDetailsManager;
@@ -54,7 +54,7 @@ public class AccountController {
 		logger.info("Received login request for user: {}", account.getUsername());
 
 		HttpStatus status;
-		Account accountFromDb = securityService.findByUsername(account.getUsername());
+		Account accountFromDb = accountService.findByUsername(account.getUsername());
 
 		if (accountFromDb != null) {
 			if (passwordEncoder.matches(account.getPassword(), accountFromDb.getPassword())) {
@@ -108,7 +108,7 @@ public class AccountController {
 			encodedUser.setPassword(passwordEncoder.encode(account.getPassword()));
 			encodedUser.setRole(account.getRole());
 
-			Account newDbAccount = securityService.createUser(encodedUser);
+			Account newDbAccount = accountService.createUser(encodedUser);
 
 			if (newDbAccount != null) {
 				UserDetails newAccount = getUserDetailsWithEncodedPassword(account);
