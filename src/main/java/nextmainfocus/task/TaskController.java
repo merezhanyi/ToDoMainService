@@ -1,5 +1,6 @@
-package nextmainfocus.tasklist;
+package nextmainfocus.task;
 
+import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,9 +24,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.annotation.Nullable;
-import nextmainfocus.tasklist.entity.Task;
 
 // Spring boot workflow:
 // front            back
@@ -34,8 +36,8 @@ import nextmainfocus.tasklist.entity.Task;
 @CrossOrigin(origins = "${client.url}")
 @RestController
 @RequestMapping("api/v1/")
-public class TasksController {
-	private static final Logger logger = LoggerFactory.getLogger(TasksController.class);
+public class TaskController {
+	private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
 
 	private static final String ID = "id";
 	private static final String CODE_OK = "OK";
@@ -63,7 +65,7 @@ public class TasksController {
 	}
 
 	@Autowired
-	TasksService tasksService;
+	TaskService taskService;
 
 	@GetMapping(value = "tasks/", produces = "application/json")
 	public ResponseEntity<String> findTasks(@RequestParam(required = false) String page,
@@ -74,7 +76,7 @@ public class TasksController {
 		HttpStatus status;
 
 		try {
-			List<Task> tasks = tasksService.findAllTasks(page, sort, field);
+			List<Task> tasks = taskService.findAllTasks(page, sort, field);
 
 			if (!tasks.isEmpty()) {
 				logger.info("{} tasks were found in the database", tasks.size());
@@ -106,7 +108,7 @@ public class TasksController {
 
 		try {
 			UUID id = UUID.fromString(uuid);
-			Task task = tasksService.findById(id);
+			Task task = taskService.findById(id);
 
 			if (task != null) {
 				logger.info("A task found with ID: {}", id);
@@ -144,13 +146,17 @@ public class TasksController {
 
 		HttpStatus status;
 		String body;
+		HttpHeaders responseHeaders = new HttpHeaders();
 
 		try {
-			Task newTask = tasksService.createTask(task);
+			Task newTask = taskService.createTask(task);
 			logger.info("Task was created with description: {}", task.getDescription());
 
 			body = fillBody(CODE_OK, MESSAGE_CREATED, Arrays.asList(newTask));
-			status = HttpStatus.OK;
+			status = HttpStatus.CREATED;
+			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{taskLocation}")
+					.buildAndExpand(newTask.getId().toString()).toUri();
+			responseHeaders.setLocation(location);
 		} catch (Exception exception) {
 			logger.info("Task was not created with description: {}", task.getDescription());
 			logger.error("due to: {}", exception.getMessage());
@@ -158,7 +164,7 @@ public class TasksController {
 			body = fillBody(CODE_SERVER_ERROR, MESSAGE_CREATION_FAILED, null);
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 		}
-		return new ResponseEntity<>(body, status);
+		return new ResponseEntity<>(body, responseHeaders, status);
 	}
 
 	@PutMapping(value = "tasks/{id}", produces = "application/json")
@@ -170,7 +176,7 @@ public class TasksController {
 
 		try {
 			UUID id = UUID.fromString(uuid);
-			Task updatedTask = tasksService.updateTask(id, task);
+			Task updatedTask = taskService.updateTask(id, task);
 
 			if (updatedTask != null) {
 				logger.info("A task updated with ID={}", id);
@@ -208,11 +214,11 @@ public class TasksController {
 
 		try {
 			UUID id = UUID.fromString(uuid);
-			tasksService.deleteTask(id);
+			taskService.deleteTask(id);
 			logger.info("A task deleted with ID={}", id);
 
 			body = fillBody(CODE_OK, MessageFormat.format("{0}: {1}", MESSAGE_DELETED, id), null);
-			status = HttpStatus.OK;
+			status = HttpStatus.NO_CONTENT;
 		} catch (IllegalArgumentException exception) {
 			logger.error(LOG_MESSAGE_NOT_VALID_UUID, uuid);
 			logger.error(exception.getMessage());

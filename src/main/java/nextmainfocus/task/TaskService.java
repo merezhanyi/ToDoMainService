@@ -1,4 +1,4 @@
-package nextmainfocus.tasklist;
+package nextmainfocus.task;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,16 +10,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import nextmainfocus.tasklist.entity.Task;
-import nextmainfocus.tasklist.repository.TasksRepository;
-
 @Service
-public class TasksService {
+public class TaskService {
+
 	@Autowired
-	private TasksRepository tasksRepository;
+	private TaskRepository taskRepository;
 
 	public Task createTask(Task task) {
-		return tasksRepository.save(task);
+		return taskRepository.save(task);
 	}
 
 	public List<Task> findAllTasks(String page, String sorting, String field) {
@@ -34,21 +32,21 @@ public class TasksService {
 
 		if (page != null && sort != null) {
 			Pageable pageable = PageRequest.of(Integer.valueOf(page), 10, sort);
-			return tasksRepository.findAll(pageable).getContent();
+			return taskRepository.findAll(pageable).getContent();
 		} else if (page != null) {
 			Pageable pageable = PageRequest.of(Integer.valueOf(page), 10);
-			return tasksRepository.findAll(pageable).getContent();
+			return taskRepository.findAll(pageable).getContent();
 		}
 
 		if (sort != null) {
-			return tasksRepository.findAll(sort);
+			return taskRepository.findAll(sort);
 		} else {
-			return tasksRepository.findAll();
+			return taskRepository.findAll();
 		}
 	}
 
 	public Task findById(UUID id) {
-		Optional<Task> possibleTask = tasksRepository.findById(id);
+		Optional<Task> possibleTask = taskRepository.findById(id);
 
 		if (possibleTask.isPresent()) {
 			return possibleTask.get();
@@ -59,7 +57,7 @@ public class TasksService {
 
 	public Task updateTask(UUID id, Task task) {
 		Task updatedTask = new Task();
-		Optional<Task> possibleTask = tasksRepository.findById(id);
+		Optional<Task> possibleTask = taskRepository.findById(id);
 		Task existingTask;
 
 		if (possibleTask.isPresent()) {
@@ -83,10 +81,10 @@ public class TasksService {
 
 		updatedTask.setDone(task.isDone());
 
-		return tasksRepository.save(updatedTask);
+		return taskRepository.save(updatedTask);
 	}
 
 	public void deleteTask(UUID id) {
-		tasksRepository.deleteById(id);
+		taskRepository.deleteById(id);
 	}
 }
