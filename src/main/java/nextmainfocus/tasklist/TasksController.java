@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import nextmainfocus.tasklist.entity.Task;
+import nextmainfocus.util.Translator;
 import nextmainfocus.util.Utility;
 
 @CrossOrigin(origins = "${client.url}")
@@ -32,17 +33,6 @@ public class TasksController {
 	private static final Logger logger = LoggerFactory.getLogger(TasksController.class);
 
 	private static final String ID = "id";
-	private static final String MESSAGE_FOUND = "Task was found";
-	private static final String MESSAGE_SERVER_ERROR = "🤖 Something went wrong!";
-	private static final String MESSAGE_INVALID_UUID = "😭 Invalid UUID!";
-	private static final String MESSAGE_NOT_FOUND = "😱 No tasks found!";
-	private static final String MESSAGE_CREATED = "Task was created";
-	private static final String MESSAGE_CREATION_FAILED = "😱 Task creation failed!";
-	private static final String MESSAGE_DELETED = "Task was deleted";
-	private static final String MESSAGE_DELETION_FAILED = "😱 Deleting failed!";
-	private static final String MESSAGE_UPDATED = "Task was updated";
-	private static final String LOG_MESSAGE_GENERAL = "Cannot retrieve data from DB due to:";
-	private static final String LOG_MESSAGE_NOT_VALID_UUID = "Provided tasks's UUID={} is not valid:";
 
 	@Autowired
 	TasksService tasksService;
@@ -62,19 +52,19 @@ public class TasksController {
 				logger.info("{} tasks were found in the database", tasks.size());
 
 				status = HttpStatus.OK;
-				body = Utility.fillResponseBody(status, MESSAGE_FOUND, tasks);
+				body = Utility.fillResponseBody(status, Translator.toLocale("task.found"), tasks);
 			} else {
 				logger.error("No tasks were found in the database");
 
 				status = HttpStatus.NOT_FOUND;
-				body = Utility.fillResponseBody(status, MESSAGE_NOT_FOUND, null);
+				body = Utility.fillResponseBody(status, Translator.toLocale("task.not.found"), null);
 			}
 		} catch (Exception exception) {
-			logger.error(LOG_MESSAGE_GENERAL);
+			logger.error("Cannot retrieve data from DB due to:");
 			logger.error(exception.getMessage());
 
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
-			body = Utility.fillResponseBody(status, MESSAGE_SERVER_ERROR, null);
+			body = Utility.fillResponseBody(status, Translator.toLocale("server.error"), null);
 		}
 		return new ResponseEntity<>(body, status);
 	}
@@ -94,25 +84,25 @@ public class TasksController {
 				logger.info("A task found with ID: {}", id);
 
 				status = HttpStatus.OK;
-				body = Utility.fillResponseBody(status, MESSAGE_FOUND, Arrays.asList(task));
+				body = Utility.fillResponseBody(status, Translator.toLocale("task.found"), Arrays.asList(task));
 			} else {
 				logger.error("A task was not found with ID={}", id);
 
 				status = HttpStatus.NOT_FOUND;
-				body = Utility.fillResponseBody(status, MESSAGE_NOT_FOUND + ": " + id, null);
+				body = Utility.fillResponseBody(status, Translator.toLocale("task.not.found") + ": " + id, null);
 			}
 		} catch (IllegalArgumentException exception) {
-			logger.error(LOG_MESSAGE_NOT_VALID_UUID, uuid);
+			logger.error("Provided tasks's UUID={} is not valid:", uuid);
 			logger.error(exception.getMessage());
 
 			status = HttpStatus.BAD_REQUEST;
-			body = Utility.fillResponseBody(status, MESSAGE_INVALID_UUID, null);
+			body = Utility.fillResponseBody(status, Translator.toLocale("error.invalid.uuid"), null);
 		} catch (Exception exception) {
-			logger.error(LOG_MESSAGE_GENERAL);
+			logger.error("Cannot retrieve data from DB due to:");
 			logger.error(exception.getMessage());
 
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
-			body = Utility.fillResponseBody(status, MESSAGE_SERVER_ERROR, null);
+			body = Utility.fillResponseBody(status, Translator.toLocale("server.error"), null);
 		}
 		return new ResponseEntity<>(body, status);
 	}
@@ -132,13 +122,13 @@ public class TasksController {
 			logger.info("Task was created with description: {}", task.getDescription());
 
 			status = HttpStatus.OK;
-			body = Utility.fillResponseBody(status, MESSAGE_CREATED, Arrays.asList(newTask));
+			body = Utility.fillResponseBody(status, Translator.toLocale("task.created"), Arrays.asList(newTask));
 		} catch (Exception exception) {
 			logger.info("Task was not created with description: {}", task.getDescription());
 			logger.error("due to: {}", exception.getMessage());
 
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
-			body = Utility.fillResponseBody(status, MESSAGE_CREATION_FAILED, null);
+			body = Utility.fillResponseBody(status, Translator.toLocale("task.not.created"), null);
 		}
 		return new ResponseEntity<>(body, status);
 	}
@@ -158,25 +148,25 @@ public class TasksController {
 				logger.info("A task updated with ID={}", id);
 
 				status = HttpStatus.OK;
-				body = Utility.fillResponseBody(status, MESSAGE_UPDATED, Arrays.asList(updatedTask));
+				body = Utility.fillResponseBody(status, Translator.toLocale("task.updated"), Arrays.asList(updatedTask));
 			} else {
 				logger.error("A task was not updated with ID={}", id);
 
 				status = HttpStatus.NOT_FOUND;
-				body = Utility.fillResponseBody(status, MESSAGE_NOT_FOUND + ": " + id, null);
+				body = Utility.fillResponseBody(status, Translator.toLocale("task.not.found") + ": " + id, null);
 			}
 		} catch (IllegalArgumentException exception) {
-			logger.error(LOG_MESSAGE_NOT_VALID_UUID, uuid);
+			logger.error("Provided tasks's UUID={} is not valid:", uuid);
 			logger.error(exception.getMessage());
 
 			status = HttpStatus.BAD_REQUEST;
-			body = Utility.fillResponseBody(status, MESSAGE_INVALID_UUID, null);
+			body = Utility.fillResponseBody(status, Translator.toLocale("error.invalid.uuid"), null);
 		} catch (Exception exception) {
 			logger.error("Cannot update data in DB due to:");
 			logger.error(exception.getMessage());
 
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
-			body = Utility.fillResponseBody(status, MESSAGE_SERVER_ERROR, null);
+			body = Utility.fillResponseBody(status, Translator.toLocale("server.error"), null);
 		}
 		return new ResponseEntity<>(body, status);
 	}
@@ -194,25 +184,28 @@ public class TasksController {
 			logger.info("A task deleted with ID={}", id);
 
 			status = HttpStatus.OK;
-			body = Utility.fillResponseBody(status, MessageFormat.format("{0}: {1}", MESSAGE_DELETED, id), null);
+			body = Utility.fillResponseBody(status, MessageFormat.format("{0}: {1}",
+					Translator.toLocale("task.deleted"), id), null);
 		} catch (IllegalArgumentException exception) {
-			logger.error(LOG_MESSAGE_NOT_VALID_UUID, uuid);
+			logger.error("Provided tasks's UUID={} is not valid:", uuid);
 			logger.error(exception.getMessage());
 
 			status = HttpStatus.BAD_REQUEST;
-			body = Utility.fillResponseBody(status, MESSAGE_INVALID_UUID, null);
+			body = Utility.fillResponseBody(status, Translator.toLocale("error.invalid.uuid"), null);
 		} catch (EmptyResultDataAccessException exception) {
 			logger.error("A task was not deleted with ID={} due to:", uuid);
 			logger.error(exception.getMessage());
 
 			status = HttpStatus.NOT_FOUND;
-			body = Utility.fillResponseBody(status, MessageFormat.format("{}: {}", MESSAGE_NOT_FOUND, uuid), null);
+			body = Utility.fillResponseBody(status, MessageFormat.format("{}: {}",
+					Translator.toLocale("task.not.found"), uuid), null);
 		} catch (Exception exception) {
 			logger.error("A task was not deleted with ID={} due to:", uuid);
 			logger.error(exception.getMessage());
 
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
-			body = Utility.fillResponseBody(status, MessageFormat.format("{}: {}", MESSAGE_DELETION_FAILED, uuid), null);
+			body = Utility.fillResponseBody(status, MessageFormat.format("{}: {}",
+					Translator.toLocale("task.not.deleted"), uuid), null);
 		}
 		return new ResponseEntity<>(body, status);
 	}
