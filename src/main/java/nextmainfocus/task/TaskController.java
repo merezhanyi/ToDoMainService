@@ -1,5 +1,6 @@
-package nextmainfocus.tasklist;
+package nextmainfocus.task;
 
+import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,27 +23,33 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import nextmainfocus.tasklist.entity.Task;
 import nextmainfocus.util.Translator;
 import nextmainfocus.util.Utility;
+
+// Spring boot workflow:
+// front            back
+// httpRequest > controller > service (magic here) > repo (interface) > entities (db)
+//             < controller < service (magic here) < repo (interface) < entities (db)
 
 @CrossOrigin(origins = "${client.url}")
 @RestController
 @RequestMapping("api/v1/")
-public class TasksController {
-	private static final Logger logger = LoggerFactory.getLogger(TasksController.class);
+public class TaskController {
+	private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
 	private static final String ID = "id";
 
 	private static final String responseInvalidUuid(String uuid, IllegalArgumentException exception) {
 		logger.error("Provided tasks's UUID={} is not valid:", uuid);
-			logger.error(exception.getMessage());
+		logger.error(exception.getMessage());
 
-			return Utility.fillResponseBody(HttpStatus.BAD_REQUEST, Translator.toLocale(Translator.ERROR_INVALID_UUID), null);
+		return Utility.fillResponseBody(HttpStatus.BAD_REQUEST, Translator.toLocale(Translator.ERROR_INVALID_UUID),
+				null);
 	}
 
 	@Autowired
-	TasksService tasksService;
+	TaskService taskService;
 
 	@GetMapping(value = "tasks/", produces = "application/json")
 	public ResponseEntity<String> findTasks(@RequestParam(required = false) String page,
@@ -52,7 +60,7 @@ public class TasksController {
 		HttpStatus status;
 
 		try {
-			List<Task> tasks = tasksService.findAllTasks(page, sort, field);
+			List<Task> tasks = taskService.findAllTasks(page, sort, field);
 
 			if (!tasks.isEmpty()) {
 				logger.info("{} tasks were found in the database", tasks.size());
@@ -84,18 +92,20 @@ public class TasksController {
 
 		try {
 			UUID id = UUID.fromString(uuid);
-			Task task = tasksService.findById(id);
+			Task task = taskService.findById(id);
 
 			if (task != null) {
 				logger.info("A task found with ID: {}", id);
 
 				status = HttpStatus.OK;
-				body = Utility.fillResponseBody(status, Translator.toLocale(Translator.TASK_FOUND), Arrays.asList(task));
+				body = Utility.fillResponseBody(status, Translator.toLocale(Translator.TASK_FOUND),
+						Arrays.asList(task));
 			} else {
 				logger.error("A task was not found with ID={}", id);
 
 				status = HttpStatus.NOT_FOUND;
-				body = Utility.fillResponseBody(status, Translator.toLocale(Translator.TASK_NOT_FOUND) + ": " + id, null);
+				body = Utility.fillResponseBody(status, Translator.toLocale(Translator.TASK_NOT_FOUND) + ": " + id,
+						null);
 			}
 		} catch (IllegalArgumentException exception) {
 			status = HttpStatus.BAD_REQUEST;
@@ -119,13 +129,18 @@ public class TasksController {
 
 		HttpStatus status;
 		String body;
+		HttpHeaders responseHeaders = new HttpHeaders();
 
 		try {
-			Task newTask = tasksService.createTask(task);
+			Task newTask = taskService.createTask(task);
 			logger.info("Task was created with description: {}", task.getDescription());
 
 			status = HttpStatus.OK;
-			body = Utility.fillResponseBody(status, Translator.toLocale(Translator.TASK_CREATED), Arrays.asList(newTask));
+			body = Utility.fillResponseBody(status, Translator.toLocale(Translator.TASK_CREATED),
+					Arrays.asList(newTask));
+			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{taskLocation}")
+					.buildAndExpand(newTask.getId().toString()).toUri();
+			responseHeaders.setLocation(location);
 		} catch (Exception exception) {
 			logger.info("Task was not created with description: {}", task.getDescription());
 			logger.error("due to: {}", exception.getMessage());
@@ -133,7 +148,7 @@ public class TasksController {
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
 			body = Utility.fillResponseBody(status, Translator.toLocale(Translator.TASK_NOT_CREATED), null);
 		}
-		return new ResponseEntity<>(body, status);
+		return new ResponseEntity<>(body, responseHeaders, status);
 	}
 
 	@PutMapping(value = "tasks/{id}", produces = "application/json")
@@ -145,18 +160,20 @@ public class TasksController {
 
 		try {
 			UUID id = UUID.fromString(uuid);
-			Task updatedTask = tasksService.updateTask(id, task);
+			Task updatedTask = taskService.updateTask(id, task);
 
 			if (updatedTask != null) {
 				logger.info("A task updated with ID={}", id);
 
 				status = HttpStatus.OK;
-				body = Utility.fillResponseBody(status, Translator.toLocale(Translator.TASK_UPDATED), Arrays.asList(updatedTask));
+				body = Utility.fillResponseBody(status, Translator.toLocale(Translator.TASK_UPDATED),
+						Arrays.asList(updatedTask));
 			} else {
 				logger.error("A task was not updated with ID={}", id);
 
 				status = HttpStatus.NOT_FOUND;
-				body = Utility.fillResponseBody(status, Translator.toLocale(Translator.TASK_NOT_FOUND) + ": " + id, null);
+				body = Utility.fillResponseBody(status, Translator.toLocale(Translator.TASK_NOT_FOUND) + ": " + id,
+						null);
 			}
 		} catch (IllegalArgumentException exception) {
 			status = HttpStatus.BAD_REQUEST;
@@ -180,7 +197,7 @@ public class TasksController {
 
 		try {
 			UUID id = UUID.fromString(uuid);
-			tasksService.deleteTask(id);
+			taskService.deleteTask(id);
 			logger.info("A task deleted with ID={}", id);
 
 			status = HttpStatus.OK;
