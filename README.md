@@ -165,12 +165,15 @@ admin / admin (roles USER, ADMIN)
 
 ## Monitoring
 
-Acturator is available
+- Swagger is available
+- Acturator is available
 
 ### Local
 
-[localhost:8081/actuator](http://localhost:8081/actuator)
+- [localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- [localhost:8081/actuator](http://localhost:8081/actuator)
 
 ### Cloud (SHOULD BE UPDATED)
 
-[link to actuator](https://link.to/actuator)
+- [link to swagger](https://link.to/actuator)
+- [link to actuator](https://link.to/actuator)
