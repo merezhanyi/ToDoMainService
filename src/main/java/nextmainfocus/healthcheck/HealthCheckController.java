@@ -18,8 +18,6 @@ public class HealthCheckController {
 	public ResponseEntity<String> healthCheck() {
 		logger.info("Received health check request");
 
-		String msg = Translator.toLocale(Translator.HEALTHCHECK_RESPONSE);
-
-		return ResponseEntity.ok(msg);
+		return ResponseEntity.ok(Translator.toLocale(Translator.HEALTHCHECK_RESPONSE));
 	}
 }
