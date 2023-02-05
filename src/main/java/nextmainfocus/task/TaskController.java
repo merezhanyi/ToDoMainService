@@ -28,11 +28,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import nextmainfocus.error.ErrorMessenger;
 import nextmainfocus.util.Utility;
 
-// Spring boot workflow:
-// front            back
-// httpRequest > controller > service (magic here) > repo (interface) > entities (db)
-//             < controller < service (magic here) < repo (interface) < entities (db)
-
 @CrossOrigin(origins = "${client.url}")
 @RestController
 @RequestMapping("api/v1/")

@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.json.JSONObject;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.lang.Nullable;
 
+import jakarta.annotation.Nullable;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
