@@ -1,15 +1,12 @@
-package nextmainfocus.security;
+package nextmainfocus.account;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import nextmainfocus.security.entity.Account;
-import nextmainfocus.security.repository.AccountsRepository;
-
 @Service
-public class SecurityService {
+public class AccountService {
 	@Autowired
 	private AccountsRepository accountsRepository;
 

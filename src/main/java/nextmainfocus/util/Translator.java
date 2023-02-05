@@ -20,18 +20,4 @@ public class Translator {
 		Locale locale = LocaleContextHolder.getLocale();
 		return messageSource.getMessage(msg, null, locale);
 	}
-
-	// Healthcheck
-	public static final String HEALTHCHECK_RESPONSE = "healthcheck.response";
-	// Task massages
-	public static final String TASK_FOUND = "task.found";
-	public static final String TASK_NOT_FOUND = "task.not.found";
-	public static final String TASK_CREATED = "task.created";
-	public static final String TASK_NOT_CREATED = "task.not.created";
-	public static final String TASK_DELETED = "task.deleted";
-	public static final String TASK_NOT_DELETED = "task.not.deleted";
-	public static final String TASK_UPDATED = "task.updated";
-	// Error messages
-	public static final String ERROR_SERVER = "error.server";
-	public static final String ERROR_INVALID_UUID = "error.invalid.uuid";
 }

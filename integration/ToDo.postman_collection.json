@@ -1,21 +1,41 @@
 {
 	"info": {
-		"_postman_id": "552eb031-7b95-4587-97b4-963d47f8cab9",
+		"_postman_id": "66608a81-701c-4036-8e69-9675d5566de9",
 		"name": "ToDo",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7287971"
 	},
 	"item": [
 		{
 			"name": "healthcheck",
 			"protocolProfileBehavior": {
-				"disableBodyPruning": true
+				"disableBodyPruning": true,
+				"disabledSystemHeaders": {}
 			},
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept-Language",
+						"value": "uk",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": "",
@@ -26,14 +46,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/healthcheck",
+					"raw": "http://localhost:8080/",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
-						"healthcheck"
+						""
 					]
 				}
 			},
@@ -49,7 +69,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "    {\r\n        \"username\": \"admin1\",\r\n        \"password\": \"admin1\"        \r\n    }",
+					"raw": "{\r\n    \"username\": \"guest\",\r\n    \"password\": \"password\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -76,25 +96,13 @@
 			"name": "createUser",
 			"request": {
 				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "admin",
-							"type": "string"
-						}
-					]
+					"type": "noauth"
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "    {\r\n        \"username\": \"admin1\",\r\n        \"password\": \"admin1\",\r\n        \"role\": \"ADMIN\"\r\n    }",
+					"raw": "    {\r\n        \"username\": \"guest\",\r\n        \"password\": \"password\"\r\n    }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -125,18 +133,24 @@
 					"basic": [
 						{
 							"key": "password",
-							"value": "admin1",
+							"value": "admin",
 							"type": "string"
 						},
 						{
 							"key": "username",
-							"value": "admin1",
+							"value": "admin",
 							"type": "string"
 						}
 					]
 				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept-Language",
+						"value": "uk",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "localhost:8080/api/v1/tasks/",
 					"host": [
@@ -161,16 +175,64 @@
 			"response": []
 		},
 		{
+			"name": "readTaskByID",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/v1/tasks/27823a29-ff44-42e0-a51f-48d49e8a256c",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"tasks",
+						"27823a29-ff44-42e0-a51f-48d49e8a256c"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "createTask",
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "    {\r\n        \"description\": \"Test0\",\r\n        \"dateTime\": \"2022-08-29T12:10:17.2326204\",\r\n        \"done\": false\r\n    }",
+					"raw": "    {\r\n        \"description\": \"Test10\",\r\n        \"dateTime\": \"2022-08-29T12:10:17.2326204\",\r\n        \"done\": false\r\n    }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -194,34 +256,22 @@
 			"response": []
 		},
 		{
-			"name": "readTaskByID",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8080/api/v1/tasks/1",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"v1",
-						"tasks",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "readAllTasksSorted",
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
@@ -255,7 +305,19 @@
 			"name": "readTaskByPage",
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
@@ -285,7 +347,19 @@
 			"name": "readTaskByPageSorted",
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],

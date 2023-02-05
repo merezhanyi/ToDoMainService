@@ -1,4 +1,4 @@
-package nextmainfocus.tasklist.entity;
+package nextmainfocus.task;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -20,7 +20,8 @@ import lombok.Setter;
 
 @Entity
 public class Task {
-	@GeneratedValue @UuidGenerator(style = Style.TIME)
+	@GeneratedValue
+	@UuidGenerator(style = Style.TIME)
 	@Column(name = "id", updatable = false, nullable = false)
 	private @Id @Getter @Setter UUID id;
 	private @Getter @Setter String description;
