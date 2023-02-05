@@ -40,6 +40,8 @@ dependencies {
 	implementation 'org.json:json:20141113'
 	compileOnly 'org.projectlombok:lombok:1.18.24'
 	annotationProcessor 'org.projectlombok:lombok:1.18.24'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+	implementation 'org.hibernate.validator:hibernate-validator'
 }
 
 tasks.named('test') {
