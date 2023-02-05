@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import jakarta.annotation.Nullable;
+import nextmainfocus.error.ErrorMessenger;
+import nextmainfocus.util.Utility;
 
 // Spring boot workflow:
 // front            back
@@ -38,30 +38,14 @@ import jakarta.annotation.Nullable;
 @RequestMapping("api/v1/")
 public class TaskController {
 	private static final Logger logger = LoggerFactory.getLogger(TaskController.class);
-
 	private static final String ID = "id";
-	private static final String CODE_OK = "OK";
-	private static final String CODE_NOT_FOUND = "NOT_FOUND";
-	private static final String CODE_BAD_REQUEST = "BAD_REQUEST";
-	private static final String CODE_SERVER_ERROR = "INTERNAL_SERVER_ERROR";
-	private static final String MESSAGE_FOUND = "Task was found";
-	private static final String MESSAGE_SERVER_ERROR = "🤖 Something went wrong!";
-	private static final String MESSAGE_INVALID_UUID = "😭 Invalid UUID!";
-	private static final String MESSAGE_NOT_FOUND = "😱 No tasks found!";
-	private static final String MESSAGE_CREATED = "Task was created";
-	private static final String MESSAGE_CREATION_FAILED = "😱 Task creation failed!";
-	private static final String MESSAGE_DELETED = "Task was deleted";
-	private static final String MESSAGE_DELETION_FAILED = "😱 Deleting failed!";
-	private static final String MESSAGE_UPDATED = "Task was updated";
-	private static final String LOG_MESSAGE_GENERAL = "Cannot retrieve data from DB due to:";
-	private static final String LOG_MESSAGE_NOT_VALID_UUID = "Provided tasks's UUID={} is not valid:";
 
-	private static String fillBody(String code, String message, @Nullable List<Task> results) {
-		JSONObject body = new JSONObject();
-		body.put("code", code);
-		body.put("message", message);
-		body.put("results", results);
-		return body.toString();
+	private static final String responseInvalidUuid(String uuid, IllegalArgumentException exception) {
+		logger.error("Provided tasks's UUID={} is not valid:", uuid);
+		logger.error(exception.getMessage());
+
+		return Utility.fillResponseBody(HttpStatus.BAD_REQUEST, ErrorMessenger.ERROR_INVALID_UUID,
+				null);
 	}
 
 	@Autowired
@@ -81,20 +65,20 @@ public class TaskController {
 			if (!tasks.isEmpty()) {
 				logger.info("{} tasks were found in the database", tasks.size());
 
-				body = fillBody(CODE_OK, MESSAGE_FOUND, tasks);
 				status = HttpStatus.OK;
+				body = Utility.fillResponseBody(status, TaskMessenger.TASK_FOUND, tasks);
 			} else {
 				logger.error("No tasks were found in the database");
 
-				body = fillBody(CODE_NOT_FOUND, MESSAGE_NOT_FOUND, null);
 				status = HttpStatus.NOT_FOUND;
+				body = Utility.fillResponseBody(status, TaskMessenger.TASK_NOT_FOUND, null);
 			}
 		} catch (Exception exception) {
-			logger.error(LOG_MESSAGE_GENERAL);
+			logger.error("Cannot retrieve data from DB due to:");
 			logger.error(exception.getMessage());
 
-			body = fillBody(CODE_SERVER_ERROR, MESSAGE_SERVER_ERROR, null);
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			body = Utility.fillResponseBody(status, ErrorMessenger.ERROR_SERVER, null);
 		}
 		return new ResponseEntity<>(body, status);
 	}
@@ -113,26 +97,25 @@ public class TaskController {
 			if (task != null) {
 				logger.info("A task found with ID: {}", id);
 
-				body = fillBody(CODE_OK, MESSAGE_FOUND, Arrays.asList(task));
 				status = HttpStatus.OK;
+				body = Utility.fillResponseBody(status, TaskMessenger.TASK_FOUND,
+						Arrays.asList(task));
 			} else {
 				logger.error("A task was not found with ID={}", id);
 
-				body = fillBody(CODE_NOT_FOUND, MESSAGE_NOT_FOUND + ": " + id, null);
 				status = HttpStatus.NOT_FOUND;
+				body = Utility.fillResponseBody(status, TaskMessenger.TASK_NOT_FOUND + ": " + id,
+						null);
 			}
 		} catch (IllegalArgumentException exception) {
-			logger.error(LOG_MESSAGE_NOT_VALID_UUID, uuid);
-			logger.error(exception.getMessage());
-
-			body = fillBody(CODE_BAD_REQUEST, MESSAGE_INVALID_UUID, null);
 			status = HttpStatus.BAD_REQUEST;
+			body = responseInvalidUuid(uuid, exception);
 		} catch (Exception exception) {
-			logger.error(LOG_MESSAGE_GENERAL);
+			logger.error("Cannot retrieve data from DB due to:");
 			logger.error(exception.getMessage());
 
-			body = fillBody(CODE_SERVER_ERROR, MESSAGE_SERVER_ERROR, null);
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			body = Utility.fillResponseBody(status, ErrorMessenger.ERROR_SERVER, null);
 		}
 		return new ResponseEntity<>(body, status);
 	}
@@ -152,8 +135,9 @@ public class TaskController {
 			Task newTask = taskService.createTask(task);
 			logger.info("Task was created with description: {}", task.getDescription());
 
-			body = fillBody(CODE_OK, MESSAGE_CREATED, Arrays.asList(newTask));
-			status = HttpStatus.CREATED;
+			status = HttpStatus.OK;
+			body = Utility.fillResponseBody(status,TaskMessenger.TASK_CREATED,
+					Arrays.asList(newTask));
 			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{taskLocation}")
 					.buildAndExpand(newTask.getId().toString()).toUri();
 			responseHeaders.setLocation(location);
@@ -161,8 +145,8 @@ public class TaskController {
 			logger.info("Task was not created with description: {}", task.getDescription());
 			logger.error("due to: {}", exception.getMessage());
 
-			body = fillBody(CODE_SERVER_ERROR, MESSAGE_CREATION_FAILED, null);
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			body = Utility.fillResponseBody(status, TaskMessenger.TASK_NOT_CREATED, null);
 		}
 		return new ResponseEntity<>(body, responseHeaders, status);
 	}
@@ -181,26 +165,25 @@ public class TaskController {
 			if (updatedTask != null) {
 				logger.info("A task updated with ID={}", id);
 
-				body = fillBody(CODE_OK, MESSAGE_UPDATED, Arrays.asList(updatedTask));
 				status = HttpStatus.OK;
+				body = Utility.fillResponseBody(status, TaskMessenger.TASK_UPDATED,
+						Arrays.asList(updatedTask));
 			} else {
 				logger.error("A task was not updated with ID={}", id);
 
-				body = fillBody(CODE_NOT_FOUND, MESSAGE_NOT_FOUND + ": " + id, null);
 				status = HttpStatus.NOT_FOUND;
+				body = Utility.fillResponseBody(status, TaskMessenger.TASK_NOT_FOUND + ": " + id,
+						null);
 			}
 		} catch (IllegalArgumentException exception) {
-			logger.error(LOG_MESSAGE_NOT_VALID_UUID, uuid);
-			logger.error(exception.getMessage());
-
-			body = fillBody(CODE_BAD_REQUEST, MESSAGE_INVALID_UUID, null);
 			status = HttpStatus.BAD_REQUEST;
+			body = responseInvalidUuid(uuid, exception);
 		} catch (Exception exception) {
 			logger.error("Cannot update data in DB due to:");
 			logger.error(exception.getMessage());
 
-			body = fillBody(CODE_SERVER_ERROR, MESSAGE_SERVER_ERROR, null);
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			body = Utility.fillResponseBody(status, ErrorMessenger.ERROR_SERVER, null);
 		}
 		return new ResponseEntity<>(body, status);
 	}
@@ -217,26 +200,26 @@ public class TaskController {
 			taskService.deleteTask(id);
 			logger.info("A task deleted with ID={}", id);
 
-			body = fillBody(CODE_OK, MessageFormat.format("{0}: {1}", MESSAGE_DELETED, id), null);
-			status = HttpStatus.NO_CONTENT;
+			status = HttpStatus.OK;
+			body = Utility.fillResponseBody(status, MessageFormat.format("{0}: {1}",
+					TaskMessenger.TASK_DELETED, id), null);
 		} catch (IllegalArgumentException exception) {
-			logger.error(LOG_MESSAGE_NOT_VALID_UUID, uuid);
-			logger.error(exception.getMessage());
-
-			body = fillBody(CODE_BAD_REQUEST, MESSAGE_INVALID_UUID, null);
 			status = HttpStatus.BAD_REQUEST;
+			body = responseInvalidUuid(uuid, exception);
 		} catch (EmptyResultDataAccessException exception) {
 			logger.error("A task was not deleted with ID={} due to:", uuid);
 			logger.error(exception.getMessage());
 
-			body = fillBody(CODE_NOT_FOUND, MessageFormat.format("{}: {}", MESSAGE_NOT_FOUND, uuid), null);
 			status = HttpStatus.NOT_FOUND;
+			body = Utility.fillResponseBody(status, MessageFormat.format("{}: {}",
+					TaskMessenger.TASK_NOT_FOUND, uuid), null);
 		} catch (Exception exception) {
 			logger.error("A task was not deleted with ID={} due to:", uuid);
 			logger.error(exception.getMessage());
 
-			body = fillBody(CODE_SERVER_ERROR, MessageFormat.format("{}: {}", MESSAGE_DELETION_FAILED, uuid), null);
 			status = HttpStatus.INTERNAL_SERVER_ERROR;
+			body = Utility.fillResponseBody(status, MessageFormat.format("{}: {}",
+					TaskMessenger.TASK_NOT_DELETED, uuid), null);
 		}
 		return new ResponseEntity<>(body, status);
 	}

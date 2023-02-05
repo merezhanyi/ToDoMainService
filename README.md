@@ -15,6 +15,13 @@ The main monolith service for the Todo List application.
   - Spring Data JPA
   - Postgres Driver
 
+## Spring boot workflow
+
+|front|back||||
+|---|---|---|---|---|
+|httpRequest >|controller >|service (business logic) >|repo (interface) >|entities (db)|
+||< controller|< service (magic here)|< repo (interface)|< entities (db)|
+
 ## Local Development
 
 ### via local installation
