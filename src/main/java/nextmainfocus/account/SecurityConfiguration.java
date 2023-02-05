@@ -1,4 +1,4 @@
-package nextmainfocus.security;
+package nextmainfocus.account;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,15 +19,15 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfiguration {
 	@Autowired
-	SecurityService securityService;
+	AccountService securityService;
 
 	@Bean
-	public PasswordEncoder passwordEncoder() {
+	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
 	@Bean
-	public InMemoryUserDetailsManager userDetailsManager() {
+	InMemoryUserDetailsManager userDetailsManager() {
 		List<UserDetails> users = new ArrayList<>();
 
 		// default user
@@ -44,10 +44,10 @@ public class SecurityConfiguration {
 	}
 
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests().requestMatchers("/healthcheck", "/api/v1/login/").permitAll().anyRequest()
+	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.authorizeHttpRequests().requestMatchers("/",
+				"/api/v1/login/").permitAll().anyRequest()
 				.authenticated().and().httpBasic();
-		http.csrf().disable();
 
 		return http.build();
 	}

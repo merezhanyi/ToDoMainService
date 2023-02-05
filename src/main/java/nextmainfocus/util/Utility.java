@@ -10,7 +10,7 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class Utility {
-	public static <T> String fillResponseBody(HttpStatusCode code, String message, @Nullable List<T> results) {
+	public static <T, U> String fillResponseBody(HttpStatusCode code, T message, @Nullable List<U> results) {
 		JSONObject body = new JSONObject();
 		body.put("code", code);
 		body.put("message", message);
