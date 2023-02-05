@@ -1,4 +1,4 @@
-package nextmainfocus.security.entity;
+package nextmainfocus.account;
 
 import java.util.UUID;
 
