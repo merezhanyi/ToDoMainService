@@ -130,7 +130,7 @@ public class TaskController {
 			Task newTask = taskService.createTask(task);
 			logger.info("Task was created with description: {}", task.getDescription());
 
-			status = HttpStatus.OK;
+			status = HttpStatus.CREATED;
 			body = Utility.fillResponseBody(status,TaskMessenger.TASK_CREATED,
 					Arrays.asList(newTask));
 			URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{taskLocation}")

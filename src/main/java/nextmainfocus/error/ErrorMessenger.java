@@ -6,6 +6,7 @@ import nextmainfocus.util.Translator;
 @Getter
 public enum ErrorMessenger {
 	ERROR_SERVER("error.server"),
+	ERROR_CONFLICT("error.conflict"),
 	ERROR_INVALID_UUID(
 			"error.invalid.uuid"),
 	;

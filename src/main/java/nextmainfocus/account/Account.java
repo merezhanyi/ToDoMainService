@@ -12,8 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -33,7 +31,9 @@ public class Account implements UserDetails {
 	private @Id UUID id;
 	private String username;
 	private String password;
-	private @Enumerated(EnumType.STRING) Role role;
+	// private @Enumerated(EnumType.STRING) Role role;
+	private String role;
+	private String token;
 
 	// methods below are from Spring Security and not used for now
 
@@ -69,6 +69,6 @@ public class Account implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of(new SimpleGrantedAuthority(role.name()));
+		return List.of(new SimpleGrantedAuthority(role));
 	}
 }

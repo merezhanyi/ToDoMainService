@@ -18,6 +18,7 @@ public class AccountService {
 				return null;
 			}
 		}
+
 		return accountsRepository.save(user);
 	}
 
@@ -26,6 +27,6 @@ public class AccountService {
 	}
 
 	public Account findByUsername(String username) {
-		return accountsRepository.findByUsername(username);
+		return accountsRepository.findByUsername(username).orElse(null);
 	}
 }
