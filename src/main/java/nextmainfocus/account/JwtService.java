@@ -36,8 +36,24 @@ public class JwtService {
 	public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
 		return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10))
 				.signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
+	}
+
+	// refresh token
+	public String refreshToken(String token) {
+		final Claims claims = extractAllClaims(token);
+		claims.setIssuedAt(new Date(System.currentTimeMillis()));
+		claims.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60));
+		return Jwts.builder().setClaims(claims).signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
+	}
+
+	//remove token
+	public String removeToken(String token) {
+		final Claims claims = extractAllClaims(token);
+		claims.setIssuedAt(new Date(System.currentTimeMillis()));
+		claims.setExpiration(new Date(System.currentTimeMillis()));
+		return Jwts.builder().setClaims(claims).signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
 	}
 
 	public boolean isTokenValid(String token, UserDetails userDetails) {

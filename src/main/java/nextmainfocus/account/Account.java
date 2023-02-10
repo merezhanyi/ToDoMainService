@@ -33,7 +33,7 @@ public class Account implements UserDetails {
 	private String password;
 	// private @Enumerated(EnumType.STRING) Role role;
 	private String role;
-	private String token;
+	// private String token;
 
 	// methods below are from Spring Security and not used for now
 
