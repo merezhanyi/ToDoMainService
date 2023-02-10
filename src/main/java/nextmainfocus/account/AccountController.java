@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,7 +41,7 @@ public class AccountController {
 	public PasswordEncoder passwordEncoder;
 
 	private final JwtService jwtService = new JwtService();
-	// private final AuthenticationManager authenticationManager;
+	private final AuthenticationManager authenticationManager;
 
 	private UserDetails getUserDetailsWithoutPassword(Account account) {
 		var user = User.withUsername(account.getUsername());
@@ -128,6 +130,10 @@ public class AccountController {
 			// new UsernamePasswordAuthenticationToken(
 			// account.getUsername(),
 			// account.getPassword()));
+			authenticationManager.authenticate(
+			new UsernamePasswordAuthenticationToken(
+			account.getUsername(),
+							account.getPassword()));
 
 			if (passwordEncoder.matches(account.getPassword(),
 					accountFromDb.getPassword())) {
