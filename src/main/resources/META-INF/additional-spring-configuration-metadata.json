@@ -1,9 +1,17 @@
-{
-  "properties": [
-    {
-      "name": "client.url",
-      "type": "java.lang.String",
-      "description": "Possible client's URL address for CORS"
-    }
-  ]
-}
+{"properties": [
+  {
+    "name": "client.url",
+    "type": "java.lang.String",
+    "description": "Possible client's URL address for CORS"
+  },
+  {
+    "name": "jwt.secret",
+    "type": "java.lang.String",
+    "description": "A secret phrase for JWT"
+  },
+  {
+    "name": "jwt.expiration",
+    "type": "java.lang.String",
+    "description": "Expiration time for JWT in seconds"
+  }
+]}

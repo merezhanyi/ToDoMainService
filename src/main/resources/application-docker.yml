@@ -10,3 +10,9 @@ logging:
   level:
     org:
       springframework: debug
+
+jwt:
+  secret: 3778217A25432A462D4A614E645267556B58703273357638792F423F4428472B
+  expiration: 18000000 # 5 hours in milliseconds 5 * 60 * 60 * 1000
+  authorizationHeader: Authorization
+  tokenPrefix: Bearer

@@ -8,11 +8,11 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class Utility {
-	public static <T, U> String fillResponseBody(HttpStatusCode code, T message, @Nullable U results) {
+	public static <T, U> String fillResponseBody(HttpStatusCode code, T message, @Nullable U response) {
 		JSONObject body = new JSONObject();
 		body.put("code", code);
 		body.put("message", message);
-		body.put("response", results);
+		body.put("response", response);
 		return body.toString();
 	}
 }

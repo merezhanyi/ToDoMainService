@@ -10,7 +10,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
-import nextmainfocus.account.JwtAuthenticationFilter;
+import nextmainfocus.jwt.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +24,9 @@ public class SecurityConfiguration {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 				.csrf().disable()
-				.authorizeHttpRequests().requestMatchers("/", "/api/v1/auth/**").permitAll()
+				.authorizeHttpRequests().requestMatchers("/", "/api/v1/auth/login",
+						"/api/v1/auth/register")
+				.permitAll()
 				.anyRequest().authenticated()
 				.and()
 				.sessionManagement()

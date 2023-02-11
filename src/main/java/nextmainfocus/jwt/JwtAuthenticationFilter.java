@@ -1,4 +1,4 @@
-package nextmainfocus.account;
+package nextmainfocus.jwt;
 
 import java.io.IOException;
 
@@ -26,16 +26,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		final String authHeader = request.getHeader("Authorization");
-		final String jwt;
-		final String username;
+		// final String authHeader = request.getHeader(JwtService.AUTHORIZATION);
+		// final String jwt;
+		// final String username;
 
-		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-			filterChain.doFilter(request, response);
-			return;
-		}
-		jwt = authHeader.substring(7);
-		username = jwtService.extractUsername(jwt);
+		// if (authHeader == null || !authHeader.startsWith(JwtService.BEARER)) {
+		// 	filterChain.doFilter(request, response);
+		// 	return;
+		// }
+		// jwt = authHeader.substring(7);
+		// username = jwtService.extractUsername(jwt);
+		var tokenMap = jwtService.extractTokenFromHeader(request.getHeader(jwtService.authorizationHeader));
+		String jwt = tokenMap.get("token");
+		String username = tokenMap.get("username");
 
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);

@@ -10,6 +10,14 @@ public class AccountService {
 	@Autowired
 	private AccountsRepository accountsRepository;
 
+	public Account findByUsername(String username) {
+		return accountsRepository.findByUsername(username);
+	}
+
+	public List<Account> findAllUsers() {
+		return accountsRepository.findAll();
+	}
+
 	public Account createUser(Account user) {
 		List<Account> usersFromDatabase = accountsRepository.findAll();
 
@@ -22,11 +30,4 @@ public class AccountService {
 		return accountsRepository.save(user);
 	}
 
-	public List<Account> findAllUsers() {
-		return accountsRepository.findAll();
-	}
-
-	public Account findByUsername(String username) {
-		return accountsRepository.findByUsername(username).orElse(null);
-	}
 }
