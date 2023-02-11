@@ -13,21 +13,6 @@
 				"disabledSystemHeaders": {}
 			},
 			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "admin",
-							"type": "string"
-						}
-					]
-				},
 				"method": "GET",
 				"header": [
 					{
@@ -46,8 +31,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/",
-					"protocol": "http",
+					"raw": "localhost:8080/",
 					"host": [
 						"localhost"
 					],
@@ -77,7 +61,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/v1/login/",
+					"raw": "localhost:8080/api/v1/auth/login",
 					"host": [
 						"localhost"
 					],
@@ -85,8 +69,48 @@
 					"path": [
 						"api",
 						"v1",
-						"login",
-						""
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"guest\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/auth/logout",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"logout"
 					]
 				}
 			},
@@ -110,7 +134,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/v1/users/",
+					"raw": "localhost:8080/api/v1/auth/register",
 					"host": [
 						"localhost"
 					],
@@ -118,8 +142,8 @@
 					"path": [
 						"api",
 						"v1",
-						"users",
-						""
+						"auth",
+						"register"
 					]
 				}
 			},
@@ -129,16 +153,11 @@
 			"name": "readAllTasks",
 			"request": {
 				"auth": {
-					"type": "basic",
-					"basic": [
+					"type": "bearer",
+					"bearer": [
 						{
-							"key": "password",
-							"value": "admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "admin",
+							"key": "token",
+							"value": "",
 							"type": "string"
 						}
 					]
@@ -178,16 +197,11 @@
 			"name": "readTaskByID",
 			"request": {
 				"auth": {
-					"type": "basic",
-					"basic": [
+					"type": "bearer",
+					"bearer": [
 						{
-							"key": "password",
-							"value": "admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "admin",
+							"key": "token",
+							"value": "",
 							"type": "string"
 						}
 					]
@@ -195,7 +209,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/v1/tasks/27823a29-ff44-42e0-a51f-48d49e8a256c",
+					"raw": "localhost:8080/api/v1/tasks/:id",
 					"host": [
 						"localhost"
 					],
@@ -204,7 +218,14 @@
 						"api",
 						"v1",
 						"tasks",
-						"27823a29-ff44-42e0-a51f-48d49e8a256c"
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "27823a29-ff44-42e0-a51f-48d49e8a256c",
+							"description": "UUID from DB"
+						}
 					]
 				}
 			},
@@ -214,16 +235,11 @@
 			"name": "createTask",
 			"request": {
 				"auth": {
-					"type": "basic",
-					"basic": [
+					"type": "bearer",
+					"bearer": [
 						{
-							"key": "password",
-							"value": "admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "admin",
+							"key": "token",
+							"value": "",
 							"type": "string"
 						}
 					]
@@ -232,7 +248,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "    {\r\n        \"description\": \"Test10\",\r\n        \"dateTime\": \"2022-08-29T12:10:17.2326204\",\r\n        \"done\": false\r\n    }",
+					"raw": "    {\r\n        \"description\": \"TestIt\",\r\n        \"dateTime\": \"2023-08-29T12:10:17.2326204\",\r\n        \"done\": false\r\n    }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -259,16 +275,11 @@
 			"name": "readAllTasksSorted",
 			"request": {
 				"auth": {
-					"type": "basic",
-					"basic": [
+					"type": "bearer",
+					"bearer": [
 						{
-							"key": "password",
-							"value": "admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "admin",
+							"key": "token",
+							"value": "",
 							"type": "string"
 						}
 					]
@@ -305,16 +316,11 @@
 			"name": "readTaskByPage",
 			"request": {
 				"auth": {
-					"type": "basic",
-					"basic": [
+					"type": "bearer",
+					"bearer": [
 						{
-							"key": "password",
-							"value": "admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "admin",
+							"key": "token",
+							"value": "",
 							"type": "string"
 						}
 					]
@@ -347,16 +353,11 @@
 			"name": "readTaskByPageSorted",
 			"request": {
 				"auth": {
-					"type": "basic",
-					"basic": [
+					"type": "bearer",
+					"bearer": [
 						{
-							"key": "password",
-							"value": "admin",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "admin",
+							"key": "token",
+							"value": "",
 							"type": "string"
 						}
 					]
@@ -397,7 +398,14 @@
 			"name": "updateTask",
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PUT",
 				"header": [],
@@ -411,7 +419,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/api/v1/tasks/1",
+					"raw": "localhost:8080/api/v1/tasks/:id",
 					"host": [
 						"localhost"
 					],
@@ -420,7 +428,14 @@
 						"api",
 						"v1",
 						"tasks",
-						"1"
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "27823a29-ff44-42e0-a51f-48d49e8a256c",
+							"description": "UUID from DB"
+						}
 					]
 				}
 			},
@@ -430,12 +445,19 @@
 			"name": "deleteTask",
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
 				},
-				"method": "DELETE",
+				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8080/api/v1/tasks/1",
+					"raw": "localhost:8080/api/v1/tasks/:id",
 					"host": [
 						"localhost"
 					],
@@ -444,44 +466,14 @@
 						"api",
 						"v1",
 						"tasks",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "logout",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "    {\r\n        \"description\": \"Test0\",\r\n        \"dateTime\": \"2022-08-29T12:10:17.2326204\",\r\n        \"done\": false\r\n    }",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8080/api/v1/logout/",
-					"protocol": "http",
-					"host": [
-						"localhost"
+						":id"
 					],
-					"port": "8080",
-					"path": [
-						"api",
-						"v1",
-						"logout",
-						""
+					"variable": [
+						{
+							"key": "id",
+							"value": "27823a29-ff44-42e0-a51f-48d49e8a256c",
+							"description": "UUID from DB"
+						}
 					]
 				}
 			},
