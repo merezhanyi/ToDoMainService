@@ -31,9 +31,7 @@ public class Account implements UserDetails {
 	private @Id UUID id;
 	private String username;
 	private String password;
-	// private @Enumerated(EnumType.STRING) Role role;
 	private String role;
-	// private String token;
 
 	// methods below are from Spring Security and not used for now
 
