@@ -15,19 +15,19 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
+@Data
 @Entity
 public class Task {
 	@GeneratedValue
 	@UuidGenerator(style = Style.TIME)
 	@Column(name = "id", updatable = false, nullable = false)
-	private @Id @Getter @Setter UUID id;
-	private @Getter @Setter String description;
-	private @Getter @Setter boolean isDone;
+	private @Id UUID id;
+	private String description;
+	private boolean isDone;
 
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
-	private @Getter @Setter LocalDateTime dateTime;
+	private LocalDateTime dateTime;
 }
