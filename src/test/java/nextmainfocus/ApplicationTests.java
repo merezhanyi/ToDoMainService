@@ -1,24 +1,38 @@
-// package nextmainfocus;
+package nextmainfocus;
 
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-// import nextmainfocus.tasks_list.TasksController;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-// @SpringBootTest class ApplicationTests {
+@SpringBootTest
+class ApplicationTests {
+	@Autowired
+	private WebApplicationContext webApplicationContext;
+	private MockMvc mockMvc;
 
-//     @Autowired TasksController tasksController;
+	@Test
+	void healthcheckTest() throws Exception {
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		mockMvc.perform(get("/")).andExpect(status().isOk());
+	}
 
-//     // @Test void getTasksList() {
-// //        ArrayList<Task>
-// //                body = (ArrayList<Task>) tasksController
-// //                        .findTasks("", "", "")
-// //                        .getBody();
-// //        Integer status = tasksController
-// //                            .findTasks("", "", "")
-// //                            .getStatusCodeValue();
-// //
-// //        assertThat(tasksController).isNotNull();
-// //        assertThat(status).isEqualTo(200);
-//     // }
-// }
+	@Test
+	@WithMockUser(username = "guest", password = "password", roles = "user")
+	void getAllTasksTest() throws Exception {
+		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+		MvcResult result = mockMvc.perform(get("/api/v1/tasks/"))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		assertThat(result.getResponse().getContentAsString()).contains("{\"dateTime\":\"2023-01-28T08:40:54.597621\",\"description\":\"Drink morning");
+	}
+}
