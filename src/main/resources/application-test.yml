@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+  jpa:
+    properties:
+      hibernate:
+        dialect:org.hibernate.dialect.H2Dialect
+
+# Client URL
+client:
+  url: "*"
+
+# logging:
+#   level:
+#     org:
+#       springframework: debug
+
+jwt:
+  secret: 3778217A25432A462D4A614E645267556B58703273357638792F423F4428472B
+  expiration: 18000000 # 5 hours in milliseconds 5 * 60 * 60 * 1000
+  authorizationHeader: Authorization
+  tokenPrefix: Bearer
